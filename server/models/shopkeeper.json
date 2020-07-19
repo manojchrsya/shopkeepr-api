@@ -17,8 +17,7 @@
       "generated": false
     },
     "code": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "displayName": {
       "type": "string",
@@ -46,8 +45,7 @@
       "type": "string"
     },
     "status": {
-      "type": "string",
-      "required": false
+      "type": "string"
     },
     "payments": {
       "type": "object",

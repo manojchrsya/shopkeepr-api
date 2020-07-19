@@ -59,7 +59,6 @@ module.exports = function (ShopKeeper) {
     const shopKeeperDetail = {
       shopKeeperId: ctx.req.accessToken.shopKeeperId,
     };
-
     return SkConfig.getConfig(shopKeeperDetail);
   };
 

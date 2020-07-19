@@ -9,6 +9,7 @@
     "database": "db_shopkeepr",
     "name": "mongodb",
     "useNewUrlParser": true,
+    "lazyConnect": true,
     "connector": "loopback-connector-mongodb"
   },
   "redis": {

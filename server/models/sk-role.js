@@ -1,7 +1,6 @@
 module.exports = function (SkRole) {
-  SkRole.ROLE_DEARO_ADMIN = '$dearo-admin';
-  SkRole.ROLE_VENDOR_CLUSTER = '$vendor-cluster';
-  SkRole.ROLE_VENDOR_ADMIN = '$vendor-admin';
+  SkRole.ROLE_SYS_ADMIN = '$sys-admin';
+  SkRole.ROLE_SK_ADMIN = '$sk-admin';
 
   SkRole.AuthenticateRole = function (context) {
     if (!context.modelId) {

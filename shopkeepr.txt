@@ -1,6 +1,8 @@
-SkACL.create({ model: 'Workshop',property: '*', accessType: '*', permission: 'DENY', principalType: 'ROLE', principalId: '$everyone'})
+SkACL.create({ model: 'SkUser',property: '*', accessType: '*', permission: 'DENY', principalType: 'ROLE', principalId: '$everyone'})
 
 SkRole.create({ name: '$sys-admin', description: 'system admin'})
 SkRole.create({ name: '$sk-admin', description: 'shop admin'})
 
 SmsTemplate.create({ text: 'Please use the OTP <%= otp %> to login into account.', isActive: true, id: 'OTP' })
+
+SkACL.create({ model: 'SkUser',property: 'register', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})

@@ -1,5 +1,6 @@
 const isEmail = require('isemail');
 const _ = require('lodash');
+const bcrypt = require('bcrypt');
 
 module.exports = (SkUser) => {
   SkUser.STATUS_ACTIVE = 'ACTIVE';
@@ -42,214 +43,10 @@ module.exports = (SkUser) => {
 
   SkUser.setup();
 
-  /**
-   *
-   * @param credentials
-   * @param include
-   * @param callback
-   * @returns {*}
-   */
-
-  SkUser.login = async function (credentials = {}) {
-    if (!credentials.mobile) {
-      throw new BadRequestError('mobile is required.');
-    }
-    if (!credentials.otp) {
-      throw new BadRequestError('OTP code is required.');
-    }
-    if (!validateOtp(credentials.otp)) {
-      throw new BadRequestError('OTP code should have alleast 6 digits.');
-    }
-    // verify the otp agaist the user model
-    await SkUser.verifyOtp(credentials.mobile, credentials.otp);
-
-    // get user detials
-    const userQuery = {
-      where: { mobile: credentials.mobile },
-      include: {
-        relation: 'shopKeeper',
-        scope: {
-          include: ['logo'],
-        },
-      },
-    };
-    const userData = await SkUser.findOne(userQuery);
-    if (!userData) {
-      throw new UnauthorizedError('Mobile number is not registered.');
-    }
-    if (userData.status === SkUser.STATUS_INACTIVE) {
-      throw new BadRequestError('User is not activated.');
-    }
-    const userType = await SkUser.getUserType(userData.id);
-    if (userType === SkUser.USER_TYPE_SHOPKEEPER && _.isEmpty(userData.shopKeeper())) {
-      throw new BadRequestError('None of the Account assigned to the user.');
-    }
-    // creating the accesstoken for user
-    const tokenObj = {
-      ttl: SkUser.app.get('tokenTTL'),
-    };
-    const clusterLogo = null;
-    if (userData.shopKeeperId) {
-      tokenObj.shopKeeperId = userData.shopKeeperId;
-    }
-    const token = await userData.createAccessToken(tokenObj, {});
-    userData.clusterLogo = clusterLogo;
-    userData.token = token;
-    return userData;
-  };
-
-  SkUser.remoteMethod(
-    'login',
-    {
-      description: 'Login with OTP code agaist the mobile number.',
-      accepts: [
-        {
-          arg: 'credentials', type: 'object', required: true, http: { source: 'body' },
-        },
-      ],
-      returns: {
-        arg: 'status', type: 'object', root: true,
-      },
-      http: { verb: 'post' },
-    },
-  );
-
-  SkUser.isAdmin = function (userId) {
-    return SkRoleMapping.findByPrincipalId(userId, { include: 'role' })
-      .then((mappings) => {
-        const roleName = [];
-        _.each(mappings, (mapping) => {
-          roleName.push(mapping.role().name);
-        });
-
-        return ((_.size(roleName) === 1 && _.head(roleName) === SkRole.ROLE_DEARO_ADMIN));
-      });
-  };
-
-  SkUser.getUserType = async function (userId) {
-    const count = await SkUser.count({ id: userId });
-    if (!count) {
-      throw new BadRequestError('User not found in records.');
-    }
-    return SkUser.USER_TYPE_SHOPKEEPER;
-  };
-
-  /**
-   * [sendOTP send the otp code to registered mobile number if mobile number is not
-   *  register then also show success message]
-   * @param  {[type]}   mobile [description]
-   * @param  {Function} callback     [description]
-   * @return {[type]}          [description]
-   */
-  SkUser.generateOtp = async function (ctx, options) {
-    const { mobile } = options;
-    if (!mobile || !validateMobile(mobile)) {
-      throw new BadRequestError('mobile is not valid.');
-    }
-
-    const userData = await SkUser.findOne({ where: { mobile } });
-    if (!userData) {
-      throw new UnauthorizedError('Mobile number is not registered.');
-    }
-    if (userData.status === SkUser.STATUS_INACTIVE) {
-      throw new BadRequestError('User is not activated.');
-    }
-    const otp = generateOtp();
-
-    try {
-      await userData.updateAttributes({ otp });
-      Sms.send({
-        template: 'OTP',
-        mobile: userData.mobile,
-        params: {
-          otp,
-        },
-      });
-      return {
-        status: 'success',
-        message: 'OTP code is send successfully to registered user.',
-      };
-    } catch (error) {
-      throw new BadRequestError(error.message);
-    }
-  };
-
-  SkUser.remoteMethod(
-    'generateOtp',
-    {
-      description: 'Send OTP to registered mobile number.',
-      accepts: [
-        { arg: 'ctx', type: 'object', http: { source: 'context' } },
-        {
-          arg: 'options', type: 'object', required: true, http: { source: 'body' },
-        },
-      ],
-      returns: {
-        arg: 'status', type: 'object', root: true,
-      },
-      http: { verb: 'post' },
-    },
-  );
-
-  /**
-   * [verifyOtp return the success response if otp is correct]
-   * @param  {[type]}   mobile  [description]
-   * @param  {[type]}   otp [description]
-   * @param  {Function} next      [description]
-   * @return {[type]}           [description]
-   */
-  SkUser.verifyOtp = async function (mobile, otp) {
-    if (!validateMobile(mobile)) {
-      throw new BadRequestError('mobile is not valid.');
-    }
-    if (!validateOtp(otp)) {
-      throw new BadRequestError('otp is not valid.');
-    }
-    const userData = await SkUser.findOne({ where: { mobile } });
-    if (!userData) {
-      throw new UnauthorizedError('Mobile number is not registered.');
-    }
-    if (userData.status === SkUser.STATUS_INACTIVE) {
-      throw new BadRequestError('User is not activated.');
-    }
-    if (userData.otp !== otp) {
-      throw new BadRequestError('OTP code is Invalid.');
-    }
-    try {
-      // eslint-disable-next-line quote-props
-      await userData.updateAttributes({ 'otp': null });
-      return {
-        status: 'success',
-        message: 'OTP Code verified successfully.',
-      };
-    } catch (error) {
-      throw new BadRequestError(error.message);
-    }
-  };
-
-  SkUser.remoteMethod(
-    'verifyOtp',
-    {
-      description: 'Verify OTP code agaist the mobile number.',
-      accepts: [
-        {
-          arg: 'mobile', type: 'string', required: true, http: { source: 'form' },
-        },
-        {
-          arg: 'otp', type: 'string', required: true, http: { source: 'form' },
-        },
-      ],
-      returns: {
-        arg: 'status', type: 'object', root: true,
-      },
-      http: { verb: 'post' },
-    },
-  );
-
   // check customer's mobile number should not get updated
   SkUser.observe('before save', (ctx, next) => {
     if (ctx.isNewInstance) {
-      ctx.instance.status = SkUser.STATUS_INACTIVE; // update status for new instance
+      ctx.instance.status = SkUser.STATUS_ACTIVE; // update status for new instance
       next();
     } else if (ctx.instance && typeof ctx.instance.mobile !== 'undefined') {
       const error = new BadRequestError('Mobile number can not be updated.');
@@ -275,6 +72,26 @@ module.exports = (SkUser) => {
       next();
     }
   });
+
+  SkUser.isAdmin = function (userId) {
+    return SkRoleMapping.findByPrincipalId(userId, { include: 'role' })
+      .then((mappings) => {
+        const roleName = [];
+        _.each(mappings, (mapping) => {
+          roleName.push(mapping.role().name);
+        });
+
+        return ((_.size(roleName) === 1 && _.head(roleName) === SkRole.ROLE_DEARO_ADMIN));
+      });
+  };
+
+  SkUser.getUserType = async function (userId) {
+    const count = await SkUser.count({ id: userId });
+    if (!count) {
+      throw new BadRequestError('User not found in records.');
+    }
+    return SkUser.USER_TYPE_SHOPKEEPER;
+  };
 
   // get VendorId(s) for user/cluster-admin
   SkUser.getShopKeeperIdForUser = async function (ctx) {
@@ -303,5 +120,130 @@ module.exports = (SkUser) => {
       arg: 'ctx', type: 'object', root: true,
     },
     http: { verb: 'get' },
+  });
+
+  SkUser.register = async function (data) {
+    // validate details
+    const errors = {};
+    if (!data.business) {
+      errors.business = ['field is required.'];
+    }
+    if (!data.email) {
+      errors.email = ['field is required.'];
+    }
+    if (!data.name) {
+      errors.name = ['field is required.'];
+    }
+    if (!data.password) {
+      errors.password = ['field is required.'];
+    }
+    if (/^[a-zA-Z][0-9]$/.test(data.password)) {
+      errors.password = ['should be alphanumeric only.'];
+    }
+    if (!_.isEmpty(errors)) {
+      const error = new BadRequestError('Invalid user data.');
+      error.details = {
+        messages: errors,
+      };
+      throw error;
+    }
+    // check if email or mobile already exist
+    const shopCount = await ShopKeeper.count({ email: data.email });
+    if (shopCount !== 0) throw new BadRequestError('Shop already exist with provided email id.');
+    // add business name and owner Name
+    const business = {
+      displayName: data.business,
+      email: data.email,
+      contactPerson: data.name,
+      mobile: data.mobile,
+      status: ShopKeeper.STATUS_ACTIVE,
+    };
+    const shopkeeper = await ShopKeeper.create(business);
+    const shopUser = {
+      shopKeeperId: shopkeeper.id,
+      email: data.email,
+      mobile: data.mobile,
+      name: data.name,
+      password: data.password,
+      status: SkUser.STATUS_ACTIVE,
+    };
+    const user = await SkUser.create(shopUser);
+    // assign role to shop user
+    const role = await SkRole.findOneByName('$sk-admin');
+    await SkRoleMapping.create({ principalType: 'USER', principalId: user.id, roleId: role.id });
+    return user;
+  };
+
+  SkUser.remoteMethod('register', {
+    description: 'Busines and User registration.',
+    accepts: [
+      { arg: 'data', type: 'object', http: { source: 'body' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
+
+  SkUser.login = async function (credentials = {}) {
+    if (!credentials.email) {
+      throw new BadRequestError('mobile is required.');
+    }
+    if (!credentials.password) {
+      throw new BadRequestError('password is required.');
+    }
+    // get user detials
+    const userQuery = {
+      where: { email: credentials.email },
+      include: [
+        {
+          relation: 'shop',
+          scope: {
+            include: ['logo'],
+          },
+        }, {
+          relation: 'roles',
+        },
+      ],
+    };
+    const userData = await SkUser.findOne(userQuery);
+    // validate password
+    const isEqual = await bcrypt.compare(credentials.password, userData.password);
+    if (!isEqual) {
+      throw new BadRequestError('Incorrect Password');
+    }
+    if (!userData) {
+      throw new UnauthorizedError('Email does not exist.');
+    }
+    if (userData.status === SkUser.STATUS_INACTIVE) {
+      throw new BadRequestError('User is not activated.');
+    }
+    const userType = await SkUser.getUserType(userData.id);
+    if (userType === SkUser.USER_TYPE_SHOPKEEPER && userData.shop().length === 0) {
+      throw new BadRequestError('None of the shop assigned to the user.');
+    }
+    // creating the accesstoken for user
+    const tokenObj = {
+      ttl: SkUser.app.get('tokenTTL'),
+    };
+    if (userData.shopKeeperId) {
+      tokenObj.workshopId = userData.shopKeeperId;
+    }
+    const token = await userData.createAccessToken(tokenObj, {});
+    userData.token = token;
+    return userData;
+  };
+
+  SkUser.remoteMethod('login', {
+    description: 'Login with OTP code agaist the mobile number.',
+    accepts: [
+      {
+        arg: 'credentials', type: 'object', required: true, http: { source: 'body' },
+      },
+    ],
+    returns: {
+      arg: 'status', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
   });
 };

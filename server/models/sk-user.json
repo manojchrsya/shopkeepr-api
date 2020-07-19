@@ -9,8 +9,7 @@
   },
   "excludeBaseProperties": [
     "realm",
-    "username",
-    "password"
+    "username"
   ],
   "mixins": {
     "IdInject": {},
@@ -22,7 +21,7 @@
     }
   },
   "hidden": [
-    "otp"
+    "password"
   ],
   "properties": {
     "id": {
@@ -58,9 +57,9 @@
         "unique": true
       }
     },
-    "otp": {
+    "password": {
       "type": "string",
-      "required": false
+      "required": true
     },
     "clusterId": {
       "type": "string"
@@ -92,8 +91,9 @@
       "through": "SkRoleMapping",
       "keyThrough": "roleId"
     },
-    "shopKeeper": {
+    "shop": {
       "type": "belongsTo",
+      "foreignKey": "shopKeeperId",
       "model": "ShopKeeper"
     },
     "cluster": {
