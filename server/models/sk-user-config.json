@@ -1,0 +1,35 @@
+{
+  "name": "SkUserConfig",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "scope": {},
+  "mixins": {
+    "IdInject": {}
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "userId": {
+      "type": "string"
+    },
+    "userType": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "user": {
+      "type": "belongsTo",
+      "model": "VendorUser",
+      "foreignKey": "userId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

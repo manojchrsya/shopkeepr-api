@@ -1,0 +1,62 @@
+{
+  "name": "Address",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true,
+    "strict": "filter"
+  },
+  "mixins": {
+    "IdInject": {}
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "street": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "stateCode": {
+      "type": "string"
+    },
+    "pincode": {
+      "type": "number",
+      "required": true
+    },
+    "ownerId": {
+      "type": "string",
+      "required": true
+    },
+    "ownerType": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "owner": {
+      "type": "belongsTo",
+      "polymorphic": {
+        "foreignKey": "ownerId",
+        "discriminator": "ownerType"
+      }
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

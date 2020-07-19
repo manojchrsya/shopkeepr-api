@@ -1,0 +1,113 @@
+{
+  "name": "ShopKeeper",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true,
+    "strict": true
+  },
+  "mixins": {
+    "IdInject": {},
+    "ShopKeeperScope": {}
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "code": {
+      "type": "string",
+      "required": true
+    },
+    "displayName": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "string"
+    },
+    "registeredName": {
+      "type": "string"
+    },
+    "contactPerson": {
+      "type": "string"
+    },
+    "gstNumber": {
+      "type": "string"
+    },
+    "panNumber": {
+      "type": "string"
+    },
+    "mobile": {
+      "type": "string"
+    },
+    "alternateContactNumber": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "required": false
+    },
+    "payments": {
+      "type": "object",
+      "properties": {
+        "neft": {
+          "type": "object",
+          "properties": {
+            "bankName": {
+              "type": "string"
+            },
+            "branchName": {
+              "type": "string"
+            },
+            "accountNumber": {
+              "type": "string"
+            },
+            "ifscCode": {
+              "type": "string"
+            }
+          }
+        },
+        "upi": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "validations": [],
+  "relations": {
+    "users": {
+      "type": "hasMany",
+      "model": "SkUser",
+      "foreignKey": "shopKeeperId"
+    },
+    "logo": {
+      "type": "hasOne",
+      "model": "FileResource",
+      "polymorphic": "uploadable",
+      "scope": {
+        "where": {
+          "customScope": "logo"
+        }
+      }
+    },
+    "address": {
+      "type": "hasMany",
+      "model": "Address",
+      "polymorphic": "owner"
+    },
+    "config": {
+      "type": "hasOne",
+      "model": "SkConfig",
+      "polymorphic": "config"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

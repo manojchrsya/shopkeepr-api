@@ -1,0 +1,26 @@
+{
+  "name": "SkRole",
+  "base": "Role",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "principals": {
+      "type": "hasMany",
+      "model": "SkRoleMapping",
+      "foreignKey": "roleId"
+    },
+    "users": {
+      "type": "hasMany",
+      "model": "SkUser",
+      "foreignKey": "roleId",
+      "through": "SkRoleMapping",
+      "keyThrough": "principalId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

@@ -1,0 +1,42 @@
+{
+  "name": "HsnMaster",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true,
+    "strict": true
+  },
+  "properties": {
+    "hsn": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "cgst": {
+      "type": "number",
+      "required": true
+    },
+    "sgst": {
+      "type": "number",
+      "required": true
+    },
+    "igst": {
+      "type": "number",
+      "required": true
+    },
+    "taxPercent": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

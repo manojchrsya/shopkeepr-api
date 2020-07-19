@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= invoice.vendor.registeredName %> - Invoice</title>
+    <style>
+      @import url(http://fonts.googleapis.com/css?family=Open+Sans);
+      body {
+         font-family: Lato, Helvetica Neue, Helvetica, Arial, sans-serif;
+         -webkit-print-color-adjust: exact;
+      }
+      .info td.billTo span {
+          display: block;
+          margin: 0 0 5px;
+          text-align: left;
+      }
+      .head tr td table tr td {
+          padding: 3px 2px;
+      }
+
+      .info td table tr td {
+          padding: 3px 2px;
+      }
+
+      .invoice_left {
+          font-weight: 600;
+          text-align: right;
+          width: 40%;
+      }
+
+      .invoice_right {
+          text-align: right;
+          width: 60%;
+      }
+
+      .item th {
+          padding: 9px;
+          background-color: #4a4a4a;
+          border-bottom: 1px solid #6e6e6e;
+          vertical-align: top;
+          color: white;
+      }
+     .right{
+          text-align: right;
+      }
+      .left{
+          text-align: left;
+      }
+
+      .item td{
+          padding: 8px;
+          border-bottom: 1px solid #12100b;
+          font-size: 10px;
+          color: #5a5a5a;
+      }
+      .total td{
+          padding: 12px;
+          font-size: 10px;
+          color: #333333;
+      }
+      span{
+          display:block;
+          text-align: left;
+      }
+      .top{
+          vertical-align: top;
+      }
+      .middle{
+          vertical-align: middle;
+      }
+      .center{
+          text-align: center;
+      }
+      .addOns{
+          bottom:0;
+      }
+      .addOns tr td span {
+        padding: 2px 15px 0px 2px;
+      }
+    </style>
+</head>
+
+<body style="font-size:10px; width:95%; margin:20px auto;">
+  <table cellpadding="0", cellspacing="0" width="100%" border="0">
+    <tr>
+      <td>
+        <table class="head" id="pageHeader" width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="50%" align="left" style="padding:10px 10px 0px 2px;">
+              <% if(invoice.vendor.logo) { %>
+                <img style="max-width: 159px; max-height: 40px;" src="<%= invoice.vendor.logo.url %>"
+                 alt="vendor-logo">
+              <% } %>
+            </td>
+            <td width="50%" align="right" style="font-size: 18px;font-weight: bold;" class="middle">
+              <% if(invoice.status === 'INVOICED') { %>
+                INVOICE
+              <% } else { %>
+                PROFORMA INVOICE
+              <% } %>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table class="info" width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="40%" class="billTo">
+              <span style="font-weight: 600"><u>Bill to</u></span>
+              <span><%= invoice.customer.displayName %></span>
+              <% if (invoice.customerAddress && invoice.customerAddress.fullWithBreak)  { %>
+                <span>
+                  <%- invoice.customerAddress.fullWithBreak.join('</span><span>') %>
+                </span>
+              <% } %>
+              <span><%= invoice.customer.mobile %></span>
+              <% if (invoice.customer.email) { %>
+                <span> <%= invoice.customer.email %></span>
+              <% } %>
+            </td>
+            <td width="60%" class="billTo">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" align="right">
+                <tr>
+                    <td class="invoice_left">
+                      <% if (invoice.status == 'INVOICED') { %>
+                        Invoice #:
+                      <% } else { %>
+                        Proforma Invoice #:
+                      <% } %>
+                    </td>
+                    <td class="invoice_right">
+                      <%= invoice.invoiceId %>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="invoice_left">
+                      <% if (invoice.status == 'INVOICED') { %>
+                        Invoice Date:
+                      <% } else { %>
+                        Proforma Date:
+                      <% } %>
+                    </td>
+                    <td class="invoice_right">
+                      <% if (invoice.status == 'INVOICED') { %>
+                        <%= moment(invoice.date).format('DD-MM-YYYY') %>
+                      <% } else { %>
+                        <%= moment(invoice.proformaDate).format('DD-MM-YYYY') %>
+                      <% } %>
+                    </td>
+                </tr>
+                <% if (invoice.vehicle) { %>
+                <tr>
+                    <td class="invoice_left">
+                        Car:
+                    </td>
+                    <td class="invoice_right">
+                        <% let vehicle = [];
+                          if(invoice.vehicle.makeName) {
+                            vehicle.push(invoice.vehicle.makeName)
+                          }
+                          if(invoice.vehicle.modelName) {
+                            vehicle.push(invoice.vehicle.modelName)
+                          }
+                          if(invoice.vehicle.variantName) {
+                            vehicle.push(invoice.vehicle.variantName)
+                          }
+                          if(invoice.vehicle.fuelType) {
+                            vehicle.push(invoice.vehicle.fuelType)
+                          }
+                        %>
+                        <%= vehicle.length > 0 ? vehicle.join(" ") : '-'; %>
+                    </td>
+                </tr>
+                 <% } %>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table class="item" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;">
+          <thead>
+              <th width="10%" class="left">Sr.No.</th>
+              <th width="30%" class="left">Items</th>
+              <th width="10%" class="left">Qty.</th>
+              <th width="10%" class="left">Unit</th>
+              <th width="10%" class="right">Rate</th>
+              <th width="10%" class="right">Discount</th>
+              <th width="20%" class="right">Amount</th>
+          </thead>
+          <%
+          let serialNumber = 1
+          invoice.parts = invoice.parts.filter(value => value.rate !== 0);
+          %>
+          <tbody>
+          <% let partsAmount = 0; %>
+          <% if(invoice.parts.length){ %>
+            <tr>
+              <td style="font-weight:800"><u>Parts</u></td>
+              <td colspan="6"> </td>
+            </tr>
+            <% invoice.parts.forEach(part => { %>
+              <tr>
+                <td> <%= serialNumber %>  </td>
+                <td> <%= part.text %> </td>
+                <td> <%= part.quantity %> </td>
+                <td> <%= part.unit %> </td>
+                <td class="right"> <%= numberFormatter('#,##0.##', part.rate) %> </td>
+                <td class="right"> <%= numberFormatter('#,##0.##', part.discountAmount) %> </td>
+                <td class="right"><%= numberFormatter('#,##0.##', part.taxableAmount) %> </td>
+              </tr>
+              <% partsAmount+= part.taxableAmount %>
+              <% serialNumber = serialNumber + 1 %>
+            <% }); %>
+          <% } %>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table class="total" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:5px;">
+          <% if(invoice.parts.length){ %>
+          <tr>
+            <td width="80%" class="right" style="font-weight:800;padding-bottom: 0"> Parts Amount: </td>
+            <td width="20%" class="right" style="font-weight:600;padding-bottom: 0"> Rs. <%= numberFormatter('#,##0.##', Math.round(partsAmount)) %></td>
+          </tr>
+          <% } %>
+          <tr>
+            <td width="80%" class="right" style="font-weight:800;padding-bottom: 0"> Total Amount: </td>
+            <td width="20%" class="right" style="font-weight:600;padding-bottom: 0"> Rs. <%= numberFormatter('#,##0.##', Math.round(invoice.summary.totalAmountBeforeTax)) %></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table class="addOns" width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="70%" class="top">
+              <span>Total Bill Amount in words:</span>
+              <span style="font-weight:800">
+                <% if (invoice.summary.totalAmountBeforeTax > 0) { %>
+                  <%= toWords(Math.round(invoice.summary.totalAmountBeforeTax), {currency: true}) %>
+                <% } else { %>
+                  <%= 'zero' %>
+                <% } %>
+              </span><br/>
+              <span>Payment to be Released in favor of <%= invoice.vendor.registeredName %></span><br/>
+              <% if (!_.isEmpty(invoice.vendor.payments)) { %>
+                <span style="padding: 5px;display: block;">
+                  Name of Bank: <%= invoice.vendor.payments.neft.bankName %>
+                </span>
+                <span style="padding: 0px 5px;display: block;">
+                  Account Number: <%= invoice.vendor.payments.neft.accountNumber %>
+                </span>
+                <span style="padding: 5px;display: block;">
+                  IFSC Code: <%= invoice.vendor.payments.neft.ifscCode %>
+                </span>
+              <% } %>
+            </td>
+            <td width="30%" class="middle">
+               <span class="right">For <%= invoice.vendor.registeredName %> </span><span class="right">Authorized Signatory</span>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table class="addOns" id="pageFooter" style="font-size: 9px;" width="100%" border="0" cellspacing="0" cellpadding="0">
+          <%
+            let vendorCorporateAddress = _.find(invoice.vendorAddress, {'type': 'corporate'});
+            let vendorRegisteredAddress = _.find(invoice.vendorAddress, {'type': 'registered'});
+          %>
+          <tr>
+            <td style="border: 1px solid black" class="left" style="padding: 5px 5px;">
+                <span><%= invoice.vendor.registeredName %></span>
+              <% if (_.size(vendorCorporateAddress) > 0 ) { %>
+              <span>
+                <b>Corporate Office:</b> <%= vendorCorporateAddress.full %>
+              </span>
+              <% } %>
+              <% if (_.size(vendorRegisteredAddress) > 0 ) { %>
+              <span>
+                <b>Registered Office:</b> <%= vendorRegisteredAddress.full %>
+              </span>
+              <% } %>
+
+              <span><%= invoice.vendor.mobile %></span>
+              <% if (invoice.vendor.email) { %>
+              <span><%= invoice.vendor.email %></span>
+              <% } %>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

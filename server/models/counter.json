@@ -1,0 +1,42 @@
+{
+  "name": "Counter",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "IdInject": {}
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "value": {
+      "type": "number",
+      "required": true
+    },
+    "counterableId": {
+      "type": "string",
+      "required": true
+    },
+    "counterableType": {
+      "type": "string",
+      "required": true
+    },
+    "customScope": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "counterable": {
+      "type": "belongsTo",
+      "polymorphic": true
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

@@ -1,0 +1,34 @@
+{
+  "name": "Pincode",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true,
+    "strict": true
+  },
+  "mixins": {},
+  "properties": {
+    "code": {
+      "type": "number",
+      "id": true,
+      "required": true
+    },
+    "stateSlug": {
+      "type": "string"
+    },
+    "citySlug": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "city": {
+      "type": "belongsTo",
+      "model": "StateCity",
+      "foreignKey": "citySlug",
+      "primaryKey": "citySlug"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

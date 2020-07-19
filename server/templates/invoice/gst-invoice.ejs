@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= invoice.vendor.registeredName %> - Invoice</title>
+  <style type="text/css">
+    .invc_tbl td,th {
+      border: 1px solid black;
+    }
+    .invc_tbl td {
+      text-align: right;
+    }
+  </style>
+</head>
+<body style="font-family: arial;color:#000; font-size:8px;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td>
+        <table id="pageHeader" class="header" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family: arial;color:#000; font-size:8px;border-collapse: collapse;">
+          <tr>
+            <%
+            const vendorCorporateAddress = _.find(invoice.vendorAddress, {'type': 'corporate'});
+            const vendorRegisteredAddress = _.find(invoice.vendorAddress, {'type': 'registered'});
+            %>
+            <td width="70%" style="padding:10px;border: 1px solid black;">
+              <div style="font-size: 12px"><%= invoice.vendor.registeredName %></div>
+
+                <% if (_.size(vendorRegisteredAddress) > 0) { %>
+                <div>
+                <%= vendorRegisteredAddress.street %> <%= vendorRegisteredAddress.location %> <%= vendorRegisteredAddress.city %>  <%= vendorRegisteredAddress.pincode %>
+                </div>
+                <% } %>
+
+              <% if (_.size(invoice.vendor.mobile) > 0 ) { %>
+              <div>Phone : <%= invoice.vendor.mobile %>  Email: <%= invoice.vendor.email %></div>
+              <% } %>
+            </td>
+            <td width="30%" align="center" style="border: 1px solid black;">
+              <% if(invoice.vendor.logo) { %>
+                <img style="max-width: 159px; max-height: 40px;" src="<%= invoice.vendor.logo.url %>" alt="vendor-logo">
+              <% } %>
+            </td>
+          </tr>
+          <% if(invoice.status == 'INVOICED') { %>
+          <tr>
+            <td colspan="2" align="right" style="font-family: arial;color:#000; font-size:8px;padding:2px;"><strong>Original for Recipient</strong>
+            </td>
+          </tr>
+          <% } %>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding-bottom:10px;text-align: center;font-size:12px">
+              <strong>
+              <% if(invoice.status == 'INVOICED') { %>
+                TAX INVOICE
+              <% } else { %>
+                PROFORMA INVOICE
+              <% } %>
+              </strong>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table class="vehicle_tbl" width="100%" cellspacing="0" cellpadding="5" border="0" style="font-family: arial;color:#000000; font-size:8px;border-collapse: collapse;">
+                <tr>
+                  <td valign="top" width="25%" style="border: 1px solid black;">
+                    <table width="100%" cellspacing="2" cellpadding="2" border="0" style="font-family: arial;color:#000000; font-size:8px;">
+                      <tr>
+                        <td style="text-decoration: underline;">BILLED TO</td>
+                      </tr>
+                      <tr>
+                        <td><%= invoice.customer.displayName %></td>
+                      </tr>
+                      <% if (_.size(invoice.customerAddress) > 0)  { %>
+                      <tr>
+                        <td>
+                          <%= invoice.customerAddress.street %>
+                        </td>
+                      </tr>
+                      <% } %>
+                      <tr>
+                        <td>Phone No: <%= invoice.customer.mobile %></td>
+                      </tr>
+                      <% if (invoice.customer.email) { %>
+                        <tr>
+                          <td>
+                            Email ID: <%= invoice.customer.email %>
+                          </td>
+                        </tr>
+                      <% } %>
+                      <tr>
+                        <td>GST No: <%= invoice.customer.gstNumber %></td>
+                      </tr>
+                      <% if (_.size(invoice.customerAddress) > 0)  { %>
+                        <tr>
+                          <td>State: <%= invoice.customerAddress.state %></td>
+                        </tr>
+                        <tr>
+                          <td>State Code: <%= invoice.customerAddress.stateCode %></td>
+                        </tr>
+                      <% } %>
+                    </table>
+                  </td>
+                  <td valign="top" width="25%" style="border: 1px solid black;">
+                    <table width="100%" cellspacing="2" cellpadding="2" border="0" style="font-family: arial;color:#000000; font-size:8px;">
+                      <tr>
+                        <td style="text-decoration: underline;">SHIPPED TO</td>
+                      </tr>
+                      <tr>
+                        <td><%= invoice.customer.displayName %></td>
+                      </tr>
+                      <% if (_.size(invoice.customerAddress) > 0)  { %>
+                      <tr>
+                        <td>
+                          <%= invoice.customerAddress.street %>
+                        </td>
+                      </tr>
+                      <% } %>
+                      <tr>
+                        <td>Phone No: <%= invoice.customer.mobile %></td>
+                      </tr>
+                      <% if (invoice.customer.email) { %>
+                        <tr>
+                          <td>
+                            Email ID: <%= invoice.customer.email %>
+                          </td>
+                        </tr>
+                      <% } %>
+                      <tr>
+                        <td>GST No: <%= invoice.customer.gstNumber %></td>
+                      </tr>
+                      <% if (_.size(invoice.customerAddress) > 0)  { %>
+                        <tr>
+                          <td>State: <%= invoice.customerAddress.state %></td>
+                        </tr>
+                        <tr>
+                          <td>State Code: <%= invoice.customerAddress.stateCode %></td>
+                        </tr>
+                      <% } %>
+                    </table>
+                  </td>
+                  <% if(invoice.vehicle) { %>
+                  <td valign="top" width="25%" style="border: 1px solid black;">
+                    <table width="100%" cellspacing="2" cellpadding="2" border="0" style="font-family: arial;color:#000000; font-size:8px;">
+                      <tr>
+                        <td style="text-decoration: underline;">VEHICLE DETAILS
+                        </td>
+                      </tr>
+                      <tr><td>Make : <%= invoice.vehicle.makeName %></td></tr>
+                      <tr><td>Model: <%= invoice.vehicle.modelName %></td></tr>
+                      <tr><td>Variant: <%= invoice.vehicle.variantName %></td></tr>
+                      <tr><td>Fuel Type: <%= invoice.vehicle.fuelType %></td></tr>
+                    </table>
+                  </td>
+                 <% } %>
+                  <td valign="top" width="25%" style="border: 1px solid black;">
+                    <table width="100%" cellspacing="2" cellpadding="2" border="0" style="font-family: arial;color:#000000; font-size:8px;">
+                      <tr>
+                        <td style="text-decoration: underline;">INVOICE DETAILS</td>
+                      </tr>
+                      <tr><td>Invoice Number: <%= invoice.invoiceId %></td></tr>
+                      <tr><td>Invoice Date:
+                        <% if (invoice.status === 'INVOICED') { %>
+                          <%= moment(invoice.date).format('DD-MM-YYYY') %>
+                        <% } else { %>
+                        <%= moment(invoice.proformaDate).format('DD-MM-YYYY') %>
+                        <% } %>
+                      </td></tr>
+                      <% if (invoice.status === 'INVOICED') { %>
+                      <tr><td>Reverse Charge: No</td></tr>
+                      <% } %>
+                      <tr><td style="text-decoration: underline;">OUR DETAILS</td></tr>
+                      <tr><td>GST No: <%= invoice.vendor.gstNumber %></td></tr>
+                      <% if(_.size(vendorRegisteredAddress) > 0) { %>
+                      <tr><td>State: <%= vendorRegisteredAddress.state %></td></tr>
+                      <tr><td>State Code: <%= vendorRegisteredAddress.stateCode %></td></tr>
+                      <% } %>
+                      <tr><td>CIN No: <%= invoice.vendor.cinNumber %></td></tr>
+                      <tr><td>PAN Card No: <%= (invoice.vendor.panNumber) %></td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="margin-bottom: 10px;">&nbsp
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table class="invc_tbl" width="100%" cellpadding="4" cellspacing="0" style="font-family: arial;color:#000; font-size:7px;border-collapse: collapse;table-layout:fixed; word-wrap: break-word;">
+              <%
+              invoice.parts = invoice.parts.filter(value => value.rate !== 0);
+              if(_.size(invoice.parts) > 0) {
+                let partSpecialDiscount = 0;
+                let partcgstAmount = 0;
+                let partsgstAmount = 0;
+                let partTaxableValue = 0;
+                let partTotalAmount = 0;
+                let partTotalValue = 0;
+                %>
+              <tr>
+                <td colspan="15" style="text-align: justify">Parts</td>
+              </tr>
+
+              <tr>
+                <th width="5%">S.No.</th>
+                <th width="6%">HSN/ SAC Code</th>
+                <th width="10%">Description</th>
+                <th width="4%">Qty</th>
+                <th width="5%">Unit</th>
+                <th width="8%">Unit Rate</th>
+                <th width="8%">Total Value</th>
+                <th width="5%">Spl. Disc</th>
+                <th width="5%">Trade Disc.</th>
+                <th width="8%">Taxable Value</th>
+                <th width="6%">CGST Rate</th>
+                <th width="7%">CGST Amount</th>
+                <th width="6%">SGST/ UGST Rate</th>
+                <th width="7%">SGST/ UGST Amount</th>
+                <th width="10%">Total Value</th>
+              </tr>
+                <% invoice.parts.forEach(function (part, key) {
+                    %>
+                    <tr>
+                      <td><%= key+1 %></td>
+                      <td><%= part.tax.hsn %></td>
+                      <td><%= part.text %></td>
+                      <td><%= part.quantity %></td>
+                      <td><%= part.unit %></td>
+                      <td><%= part.rate %></td>
+                      <td><%= parseNumber(part.quantity * part.rate) %></td>
+                      <td><%= part.discountAmount %></td>
+                      <td>0</td>
+                      <td><%= part.taxableAmount %></td>
+                      <td><%= part.tax.cgst %>%</td>
+                      <td><%= part.tax.cgstAmount %></td>
+                      <td><%= part.tax.sgst %>%</td>
+                      <td><%= part.tax.sgstAmount %></td>
+                      <td><%= part.amount %></td>
+                    </tr>
+                    <%
+                    key = key + 1;
+                    partSpecialDiscount = partSpecialDiscount + part.discountAmount;
+                    partcgstAmount = partcgstAmount + part.tax.cgstAmount;
+                    partsgstAmount = partsgstAmount + part.tax.sgstAmount;
+                    partTaxableValue = partTaxableValue + part.taxableAmount;
+                    partTotalAmount = (partTotalAmount) + parseNumber(part.quantity * part.rate);
+                    partTotalValue = (partTotalValue) + part.amount;
+                })
+                %>
+              <tr>
+                <td colspan="4" style="text-align: justify">Sub Total</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td><%= parseNumber(partTotalAmount) %></td>
+                <td><%= parseNumber(partSpecialDiscount) %></td>
+                <td>0</td>
+                <td><%= parseNumber(partTaxableValue) %></td>
+                <td>&nbsp;</td>
+                <td>
+                  <%= parseNumber(partcgstAmount) %>
+                </td>
+                <td></td>
+                <td>
+                  <%= parseNumber(partsgstAmount) %>
+                </td>
+                <td><%= parseNumber(partTotalValue) %></td>
+              </tr>
+            <% } %>
+              </table>
+          </tr>
+          <tr>
+            <td>
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-top:0;font-family: arial;color:#000; font-size:8px;" border="0">
+                <tr>
+                  <td width="50%" align="left" valign="top">
+                    <table width="100%" cellspacing="0" cellpadding="0" style="font-family: arial;color:#000; font-size:8px;">
+                      <tr>
+                        <td>
+                          <div style="padding-top:5px">Total bill amount in words</div>
+                          <div style="padding-top:5px">
+                            Rupees:
+                            <% if (invoice.summary.totalAmountAfterTax > 0) { %>
+                              <%= toWords(Math.round(invoice.summary.totalAmountAfterTax), {currency: true}) %>
+                            <% } else { %>
+                              <%= 'zero' %>
+                            <% } %>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div style="padding-top:5px">
+                            Payment to be released in favour of: <%= invoice.vendor.registeredName %>
+                          </div>
+                          <% if (_.size(invoice.vendor.payments) > 0) { %>
+                            <div style="padding-top:5px">
+                              Name of Bank: <%= invoice.vendor.payments.neft.bankName %>
+                            </div>
+                            <div style="padding-top:5px">
+                              Account Number: <%= invoice.vendor.payments.neft.accountNumber %>
+                            </div>
+                            <div style="padding-top:5px">
+                              IFSC Code: <%= invoice.vendor.payments.neft.ifscCode %>
+                            </div>
+                          <% } %>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td width="50%" valign="top">
+                    <table width="100%" cellspacing="0" cellpadding="4" style="font-family: arial;color:#000; font-size:8px;">
+                        <tr>
+                          <td style="width:50%;"></td>
+                          <td>Total Taxable Value</td>
+                          <td style="text-align: right"><%= invoice.summary.totalAmountBeforeTax %></td>
+                        </tr>
+                        <tr>
+                          <td style="width:50%;"></td>
+                          <td>Total CGST Value</td>
+                          <td style="text-align: right">
+                            <%= parseNumber(_.sum(_.map(invoice.summary.tax.cgstTotal, 'amount'))) %>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width:50%;"></td>
+                          <td>Total SGST/UGST Value</td>
+                          <td style="text-align: right">
+                            <%= parseNumber(_.sum(_.map(invoice.summary.tax.sgstTotal, 'amount'))) %>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width:50%;"></td>
+                          <td>Total Bill Amount</td>
+                          <td style="text-align: right"><%= numberFormatter('#,##0.##', Math.round(invoice.summary.totalAmountAfterTax)) %></td>
+                        </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 0 0;font-family: arial;color:#000; font-size:8px;">
+                <tr>
+                <td>
+                <table width="100%" cellpadding="4" cellspacing="0" style="font-family: arial;color:#000; font-size:7px;border-collapse: collapse;table-layout:fixed; word-wrap: break-word; text-align: justify">
+                <%  if(invoice.status === 'INVOICED') {%>
+                    <tr>
+                        <td style="text-align: end">THANK YOU FOR YOUR VISIT</td>
+                    </tr>
+                    <% }%>
+                    <tr>
+                        <td>
+                            <div><%=  (invoice.status === 'INVOICED') ? 'AGREED' : '' %> <span style="text-decoration: underline">______________________________</span></div>
+                            <br>(Authorized Signature for Customer)</td>
+
+                        <td style="text-align: end">
+                            <div style="text-decoration: underline">______________________________</div>
+                            <br> (Authorized Signature for Vendor)</td>
+                    </tr>
+                </table>
+            </td>
+    </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table id="pageFooter" class="footer" width="100%" cellpadding="0" cellspacing="0" style="font-size:8px;margin:0 auto;padding-top:10px;font-family: arial;color:#000;">
+          <tr>
+            <td style="width: 70%">
+              <span style="display: block;padding: 5px 5px 0;"><%= invoice.vendor.registeredName %></span>
+              <% if (_.size(vendorCorporateAddress) > 0 ) { %>
+              <span style="display: block;padding: 5px 5px 0;">
+              Corporate Office: <%= vendorCorporateAddress.street %> <%= vendorCorporateAddress.location %> <%= vendorCorporateAddress.city %>  <%= vendorCorporateAddress.pincode %>
+              </span>
+              <% } %>
+              <% if (_.size(vendorRegisteredAddress)) { %>
+              <span style="display: block;padding: 5px 5px 0;">
+                Registered Office: <%= vendorRegisteredAddress.street %> <%= vendorRegisteredAddress.location %> <%= vendorRegisteredAddress.city %>  <%= vendorRegisteredAddress.pincode %>
+              </span>
+              <% } %>
+            </td>
+            <% if(SkClusterLogo) { %>
+            <td style="width: 30%" align="right">
+              <span>
+                <img style="max-width: 159px; max-height: 40px; margin-top:5px;" src="<%= SkClusterLogo.url %>" alt="vendor-logo">
+              </span>
+            </td>
+            <% } %>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

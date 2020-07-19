@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+
+  node:
+    build: ./
+    container_name: ${SK_NAMESPACE}-node-${SK_ENVIRONMENT}
+    environment:
+
+      NODE_ENV: ${SK_NODE_ENVIRONMENT}
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
+      NODE_SERVER_PORT: ${SK_NODE_SERVER_PORT}
+
+      REDIS_HOST: ${SK_NAMESPACE}-redis-${SK_ENVIRONMENT}
+      REDIS_PORT: ${SK_REDIS_PORT}
+      REDIS_QUEUE_DB: ${REDIS_QUEUE_DB}
+
+      ELASTICSEARCH_HOST: ${SK_NAMESPACE}-es-${SK_ENVIRONMENT}
+
+      MONGODB_HOST: ${SK_NAMESPACE}-mongo-${SK_ENVIRONMENT}
+      MONGODB_PORT: ${SK_MONGODB_PORT}
+
+    ports:
+          - ${SK_NODE_SERVER_PORT}:${SK_NODE_SERVER_PORT}
+    volumes:
+      - ./:/src
+      - /src/.yarn
+      - /src/node_modules
+    depends_on:
+      - mongo
+      - elasticsearch
+      - redis
+
+
+  mongo:
+    image: mongo:4.2.0
+    container_name: ${SK_NAMESPACE}-mongo-${SK_ENVIRONMENT}
+    ports:
+      - ${SK_MONGODB_PORT}:27017
+    volumes:
+      - ./data/mongo:/data/db
+      - ./data-init/mongo:/data-init
+
+  elasticsearch:
+    build: ./docker-es/
+    container_name: ${SK_NAMESPACE}-es-${SK_ENVIRONMENT}
+    environment:
+      - cluster.name=dearo-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - ${SK_ELASTICSEARCH_PORT}:9200
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+
+
+  redis:
+    image: redis:5.0.5-alpine
+    container_name: ${SK_NAMESPACE}-redis-${SK_ENVIRONMENT}
+    ports:
+      - ${SK_REDIS_PORT}:6379
+    volumes:
+      - ./data/redis:/data
+
+
+volumes:
+  node_modules: {}
+  .yarn: {}
+

@@ -1,0 +1,78 @@
+{
+  "name": "shopkeepr-api",
+  "version": "0.0.0",
+  "main": "server/server.js",
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "dev": "npm start",
+    "start": "node .",
+    "nodemon": "nodemon --legacy-watch --exec npm run dev",
+    "posttest": "npm run lint && nsp check",
+    "console": "node . --console"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint"
+    }
+  },
+  "dependencies": {
+    "base62": "^1.2.0",
+    "bluebird": "^3.5.1",
+    "compression": "^1.0.3",
+    "cors": "^2.5.2",
+    "ejs": "^2.5.7",
+    "elasticsearch": "^14.1.0",
+    "email-templates": "^2.6.0",
+    "fast-csv": "^2.4.0",
+    "fs-extra": "^4.0.0",
+    "glob": "^7.1.2",
+    "helmet": "^1.3.0",
+    "html-pdf": "^2.1.0",
+    "html-to-text": "^3.3.0",
+    "isemail": "^3.0.0",
+    "json2csv": "^3.11.5",
+    "kue": "^0.11.6",
+    "lodash": "^4.17.4",
+    "loopback": "^3.17.1",
+    "loopback-boot": "^2.6.5",
+    "loopback-component-explorer": "^4.0.0",
+    "loopback-component-storage": "^3.2.0",
+    "loopback-connector-mongodb": "^3.2.1",
+    "loopback-connector-redis": "^0.1.0",
+    "loopback-connector-rest": "^3.3.0",
+    "loopback-console": "*",
+    "loopback-datasource-juggler": "^3.15.0",
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.18.1",
+    "nodemailer": "2.5.0",
+    "number-formatter": "^1.2.0",
+    "request-promise": "^4.2.1",
+    "s3-streamlogger": "^1.2.0",
+    "serve-favicon": "^2.0.1",
+    "string": "^3.3.3",
+    "strong-error-handler": "^2.0.0",
+    "to-words": "^1.0.3",
+    "winston": "^2.3.1",
+    "witch": "^1.0.3",
+    "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "eslint": "^4.3.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "husky": "^0.15.0-rc.3",
+    "nsp": "^2.1.0"
+  },
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "license": "UNLICENSED",
+  "description": "Dearo HUB API"
+}

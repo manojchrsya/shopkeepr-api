@@ -1,0 +1,36 @@
+{
+  "name": "SkCluster",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "IdInject": {}
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "shopkeeperIds": {
+      "type": "array",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "config": {
+      "type": "hasOne",
+      "model": "SkConfig",
+      "polymorphic": "config"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

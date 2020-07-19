@@ -1,0 +1,24 @@
+{
+  "name": "SkRoleMapping",
+  "base": "RoleMapping",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "role": {
+      "type": "belongsTo",
+      "model": "SkRole",
+      "foreignKey": "roleId"
+    },
+    "user": {
+      "type": "belongsTo",
+      "model": "SkUser",
+      "foreignKey": "principalId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

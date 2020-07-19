@@ -1,0 +1,106 @@
+{
+  "name": "SkUser",
+  "base": "User",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true,
+    "strict": true,
+    "caseSensitiveEmail": false
+  },
+  "excludeBaseProperties": [
+    "realm",
+    "username",
+    "password"
+  ],
+  "mixins": {
+    "IdInject": {},
+    "SkUserScope": {}
+  },
+  "configureModelMerge": {
+    "acls": {
+      "replace": true
+    }
+  },
+  "hidden": [
+    "otp"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "shopKeeperId": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "mobile": {
+      "type": "string",
+      "required": true,
+      "index": {
+        "unique": true
+      }
+    },
+    "alternateMobile": {
+      "type": "string",
+      "required": false,
+      "index": {
+        "unique": true
+      }
+    },
+    "email": {
+      "type": "string",
+      "required": false,
+      "index": {
+        "unique": true
+      }
+    },
+    "otp": {
+      "type": "string",
+      "required": false
+    },
+    "clusterId": {
+      "type": "string"
+    },
+    "remarks": {
+      "type": "string",
+      "required": false
+    },
+    "status": {
+      "type": "string",
+      "required": false,
+      "default": "INACTIVE"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "accessTokens": {
+      "type": "hasMany",
+      "model": "SkAccessToken",
+      "foreignKey": "userId",
+      "options": {
+        "disableInclude": true
+      }
+    },
+    "roles": {
+      "type": "hasMany",
+      "model": "SkRole",
+      "foreignKey": "principalId",
+      "through": "SkRoleMapping",
+      "keyThrough": "roleId"
+    },
+    "shopKeeper": {
+      "type": "belongsTo",
+      "model": "ShopKeeper"
+    },
+    "cluster": {
+      "type": "belongsTo",
+      "model": "SkCluster"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

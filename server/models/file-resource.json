@@ -1,0 +1,82 @@
+{
+  "name": "FileResource",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "IdInject": {}
+  },
+  "hidden": [
+    "mime",
+    "container",
+    "bucket",
+    "path",
+    "uploadedBy"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": false
+    },
+    "originalName": {
+      "type": "string",
+      "required": true
+    },
+    "mime": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string"
+    },
+    "container": {
+      "type": "string"
+    },
+    "bucket": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "uploadedBy": {
+      "type": "string"
+    },
+    "uploadableId": {
+      "type": "string"
+    },
+    "uploadableType": {
+      "type": "string"
+    },
+    "customScope": {
+      "type": "string"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "validations": [],
+  "relations": {
+    "uploadable": {
+      "type": "belongsTo",
+      "polymorphic": true
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

@@ -1,0 +1,110 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../../common/models",
+      "../models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../../common/mixins",
+      "../mixins"
+    ]
+  },
+  "ACL": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "SkACL": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "mongodb",
+    "public": false,
+    "options": {
+      "strictObjectIDCoercion": true
+    }
+  },
+  "Role": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "SkUser": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "Customer": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "SkAccessToken": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "SkRole": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "SkRoleMapping": {
+    "dataSource": "mongodb",
+    "public": false,
+    "options": {
+      "strictObjectIDCoercion": true
+    }
+  },
+  "Address": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "SkCluster": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "StateCity": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "Sms": {
+    "dataSource": "memory",
+    "public": false
+  },
+  "SmsLog": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "SmsTemplate": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "FileResource": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "Counter": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "Invoice": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "Pincode": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "SkConfig": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "HsnMaster": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "ShopKeeper": {
+    "dataSource": "mongodb",
+    "public": true
+  }
+}

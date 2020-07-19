@@ -1,0 +1,37 @@
+{
+  "name": "StateCity",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "citySlug": {
+      "type": "string",
+      "required": true
+    },
+    "state": {
+      "type": "string",
+      "required": true
+    },
+    "stateSlug": {
+      "type": "string",
+      "required": true
+    },
+    "stateCode": {
+      "type": "number"
+    },
+    "status": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

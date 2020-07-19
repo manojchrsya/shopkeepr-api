@@ -1,0 +1,87 @@
+{
+    "extends": "airbnb-base",
+    "rules": {
+      "max-len": ["error", 120, 4, {
+          "ignoreComments": true,
+          "ignoreUrls": true,
+          "ignorePattern": "^\\s*var\\s.+=\\s*(require\\s*\\()|(/)"
+      }],
+      "no-param-reassign": ["off"],
+      "func-names": ["off"],
+      "consistent-return": ["off"],
+      "no-console": ["error"]
+    },
+    "parserOptions": {
+      "ecmaVersion": 2017
+    },
+    "globals": {
+      "CustomError": true,
+      "BadRequestError": true,
+      "UnauthorizedError": true,
+      "ForbiddenError": true,
+      "NotFoundError": true,
+      "MethodNotAllowedError": true,
+      "NotAcceptableError": true,
+      "RequestTimeoutError": true,
+      "ConflictError": true,
+      "GoneError": true,
+      "LengthRequiredError": true,
+      "PreconditionFailedError": true,
+      "RequestEntityTooLargeError": true,
+      "RequestUriTooLongError": true,
+      "UnsupportedMediaTypeError": true,
+      "UnprocessableEntityError": true,
+      "TooManyRequestsError": true,
+      "InternalServerErrorError": true,
+      "NotImplementedError": true,
+      "BadGatewayError": true,
+      "ServiceUnavailableError": true,
+      "GatewayTimeoutError": true,
+      "HttpVersionNotSupportedError": true,
+
+
+      "getRandomInt": true,
+      "getUniqueId": true,
+      "generateOtp": true,
+      "getRandomString": true,
+      "parseNumber": true,
+      "escapeRegExp": true,
+      "stringToBoolean": true,
+      "isCarInstance": true,
+      "isBikeInstance": true,
+
+      "validateMobile": true,
+      "validateOtp": true,
+      "validateRegistrationNo": true,
+      "validateDateTime": true,
+      "dateTimeValidity": true,
+      "validateGstNumber": true,
+
+
+      "ACL": true,
+      "RoleMapping": true,
+      "Role": true,
+      "SkUser": true,
+      "SkACL": true,
+      "SkAccessToken": true,
+      "SkRole": true,
+      "Customer": true,
+      "SkRoleMapping": true,
+      "SkContactPerson": true,
+      "Address": true,
+      "SkCluster": true,
+      "StateCity": true,
+      "Sms": true,
+      "SmsLog": true,
+      "SmsTemplate": true,
+      "FileResource": true,
+      "Counter": true,
+      "Invoice": true,
+      "Pincode": true,
+      "StaticValue": true,
+      "SkConfig": true,
+      "HsnMaster": true,
+      "ShopKeeper": true,
+      "SkUserConfig": true
+    }
+  }

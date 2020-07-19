@@ -1,0 +1,21 @@
+{
+  "memory": {
+    "name": "memory",
+    "connector": "memory"
+  },
+  "mongodb": {
+    "host": "localhost",
+    "port": 27017,
+    "database": "db_shopkeepr",
+    "name": "mongodb",
+    "useNewUrlParser": true,
+    "connector": "loopback-connector-mongodb"
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "database": 1,
+    "name": "redis",
+    "connector": "loopback-connector-redis"
+  }
+}

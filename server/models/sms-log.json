@@ -1,0 +1,52 @@
+{
+  "name": "SmsLog",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "template": {
+      "type": "string",
+      "required": true
+    },
+    "mobile": {
+      "type": "string",
+      "required": true
+    },
+    "message": {
+      "type": "string",
+      "required": false
+    },
+    "params": {
+      "type": "object"
+    },
+    "sent": {
+      "type": "boolean",
+      "default": false
+    },
+    "sentOn": {
+      "type": "date"
+    },
+    "responseRaw": {
+      "type": "string"
+    },
+    "response": {
+      "type": "object"
+    },
+    "error": {
+      "type": "boolean",
+      "default": false
+    },
+    "errorOn": {
+      "type": "date"
+    },
+    "errorDetails": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

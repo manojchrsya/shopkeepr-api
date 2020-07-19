@@ -1,0 +1,53 @@
+{
+  "name": "Customer",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "IdInject": {},
+    "ShopKeeperScope": {}
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "mobile": {
+      "type": "string"
+    },
+    "alternateMobile": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "remarks": {
+      "type": "string"
+    },
+    "birthDate": {
+      "type": "date"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "addresses": {
+      "type": "hasMany",
+      "model": "Address",
+      "polymorphic": "owner"
+    },
+    "transactions": {
+      "type": "hasMany",
+      "model": "Transaction",
+      "foreignKey": "transactionId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

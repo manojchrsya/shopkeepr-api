@@ -1,0 +1,154 @@
+{
+  "name": "SkConfig",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "scope": {},
+  "mixins": {
+    "IdInject": {}
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "configId": {
+      "type": "string"
+    },
+    "configType": {
+      "type": "string"
+    },
+    "gst": {
+      "type": "boolean"
+    },
+    "inventory": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "allowVendorCreation": {
+          "type": "boolean"
+        }
+      }
+    },
+    "part": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ids": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "make": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "slugs": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "slugs": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "codes": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "workingDays": {
+      "type": [
+        "object"
+      ],
+      "properties": {
+        "day": {
+          "type": "string"
+        },
+        "start": {
+          "type": "string"
+        },
+        "end": {
+          "type": "string"
+        }
+      }
+    },
+    "lunchTime": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string"
+        },
+        "end": {
+          "type": "string"
+        }
+      }
+    },
+    "partFinder": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "customerSource": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "options": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "branding": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
