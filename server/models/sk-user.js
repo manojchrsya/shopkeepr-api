@@ -96,7 +96,7 @@ module.exports = (SkUser) => {
   // get VendorId(s) for user/cluster-admin
   SkUser.getShopKeeperIdForUser = async function (ctx) {
     const shopKeeperIds = [];
-    if (ctx.req && ctx.req.accessToken && ctx.req.accessToken.vendorId) {
+    if (ctx.req && ctx.req.accessToken && ctx.req.accessToken.shopKeeperId) {
       const { shopKeeperId } = ctx.req.accessToken;
       shopKeeperIds.push(shopKeeperId);
     }
@@ -167,9 +167,13 @@ module.exports = (SkUser) => {
       password: data.password,
       status: SkUser.STATUS_ACTIVE,
     };
-    const user = await SkUser.create(shopUser);
-    // assign role to shop user
-    const role = await SkRole.findOneByName('$sk-admin');
+    // eslint-disable-next-line no-unused-vars
+    const [user, config, role] = await Promise.all([
+      SkUser.create(shopUser),
+      SkConfig.create({ configId: shopkeeper.id }),
+      SkRole.findOneByName('$sk-admin'),
+    ]);
+
     await SkRoleMapping.create({ principalType: 'USER', principalId: user.id, roleId: role.id });
     return user;
   };
@@ -207,6 +211,8 @@ module.exports = (SkUser) => {
       ],
     };
     const userData = await SkUser.findOne(userQuery);
+    if (!userData) throw new BadRequestError('Invalid credentials');
+
     // validate password
     const isEqual = await bcrypt.compare(credentials.password, userData.password);
     if (!isEqual) {
@@ -227,7 +233,7 @@ module.exports = (SkUser) => {
       ttl: SkUser.app.get('tokenTTL'),
     };
     if (userData.shopKeeperId) {
-      tokenObj.workshopId = userData.shopKeeperId;
+      tokenObj.shopKeeperId = userData.shopKeeperId;
     }
     const token = await userData.createAccessToken(tokenObj, {});
     userData.token = token;

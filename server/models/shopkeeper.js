@@ -55,14 +55,14 @@ module.exports = function (ShopKeeper) {
     next();
   });
 
-  ShopKeeper.getSkConfig = function (ctx) {
+  ShopKeeper.getShopConfig = function (ctx) {
     const shopKeeperDetail = {
       shopKeeperId: ctx.req.accessToken.shopKeeperId,
     };
     return SkConfig.getConfig(shopKeeperDetail);
   };
 
-  ShopKeeper.remoteMethod('getSkConfig', {
+  ShopKeeper.remoteMethod('getShopConfig', {
     description: 'Get ShopKeeper configuration params.',
     accepts: [
       { arg: 'ctx', type: 'object', http: { source: 'context' } },

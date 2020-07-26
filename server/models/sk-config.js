@@ -7,8 +7,8 @@ module.exports = function (SkConfig) {
   ];
 
   SkConfig.getConfig = async function (options) {
-    const skCluster = await SkCluster.findOneByVendors(options.vendorId);
-    const configIds = [options.vendorId];
+    const skCluster = await SkCluster.findOneByShopKeeperIds(options.shopKeeperId);
+    const configIds = [options.shopKeeperId];
     if (_.size(skCluster) > 0) {
       configIds.push(skCluster.id);
     }

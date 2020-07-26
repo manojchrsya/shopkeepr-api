@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-module.exports = function (Model, options = {}) {
+module.exports = function (Model) {
   async function applyFilter(ctx) {
     ctx.args.filter = ctx.args.filter || {};
     ctx.args.filter.where = ctx.args.filter.where || {};
@@ -21,10 +21,6 @@ module.exports = function (Model, options = {}) {
     // check if shopKeeperIds is empty or not
     if (!_.isEmpty(shopKeeperIds)) {
       ctx.args.where.shopKeeperId = { inq: shopKeeperIds };
-    }
-    if (options.serviceAdvisor && ctx.req && ctx.req.accessToken && (await SkUser.checkUserFilter(ctx))) {
-      const { userId } = ctx.req.accessToken;
-      ctx.args.filter.where.serviceAdviserId = userId;
     }
     return Promise.resolve();
   }
