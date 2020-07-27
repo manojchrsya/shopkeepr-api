@@ -191,7 +191,7 @@ module.exports = (SkUser) => {
 
   SkUser.login = async function (credentials = {}) {
     if (!credentials.email) {
-      throw new BadRequestError('mobile is required.');
+      throw new BadRequestError('email is required.');
     }
     if (!credentials.password) {
       throw new BadRequestError('password is required.');
@@ -241,7 +241,7 @@ module.exports = (SkUser) => {
   };
 
   SkUser.remoteMethod('login', {
-    description: 'Login with OTP code agaist the mobile number.',
+    description: 'Login with registered email id and password.',
     accepts: [
       {
         arg: 'credentials', type: 'object', required: true, http: { source: 'body' },
