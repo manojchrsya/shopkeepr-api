@@ -28,4 +28,13 @@ module.exports = function (Customer) {
     return CustomerModel;
   };
   Customer.setup();
+
+  Customer.observe('before save', (ctx) => {
+    if (ctx.isNewInstance) {
+      if (ctx.options.accessToken && ctx.options.accessToken.shopKeeperId) {
+        ctx.instance.shopKeeperId = ctx.options.accessToken.shopKeeperId;
+      }
+    }
+    return Promise.resolve();
+  });
 };

@@ -19,6 +19,9 @@
       "type": "string",
       "required": true
     },
+    "shopKeeperId": {
+      "type": "string"
+    },
     "mobile": {
       "type": "string"
     },

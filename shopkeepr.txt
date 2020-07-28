@@ -17,3 +17,8 @@ SkRole.findOneById('5df601d32f557201e6bd913c').then(data => { data.routes = ['/d
 
 
 db.SkRoleMapping.createIndex({roleId: 1, principalType: 1, principalId: 1})
+
+SkACL.create({ model: 'Customer',property: 'create', accessType: 'WRITE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Customer',property: 'findById', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Customer',property: 'find', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Customer',property: 'patchAttributes', accessType: 'WRITE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
