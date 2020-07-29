@@ -1,13 +1,12 @@
 {
-  "name": "Customer",
+  "name": "Transaction",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "mixins": {
-    "IdInject": {},
-    "ShopKeeperScope": {}
+    "IdInject": {}
   },
   "properties": {
     "id": {
@@ -15,39 +14,40 @@
       "id": true,
       "generated": false
     },
-    "name": {
+    "customerId": {
       "type": "string",
       "required": true
     },
     "shopKeeperId": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
-    "mobile": {
-      "type": "string"
+    "type": {
+      "type": "string",
+      "required": true
     },
-    "alternateMobile": {
-      "type": "string"
+    "amount": {
+      "type": "number",
+      "required": true
     },
-    "email": {
+    "transactionId": {
       "type": "string"
     },
     "remarks": {
       "type": "string"
-    },
-    "birthDate": {
-      "type": "date"
     }
   },
   "validations": [],
   "relations": {
-    "addresses": {
-      "type": "hasMany",
-      "model": "Address",
-      "polymorphic": "owner"
+    "customer": {
+      "type": "belongsTo",
+      "model": "Customer",
+      "foreignKey": "customerId"
     },
-    "transactions": {
-      "type": "hasMany",
-      "model": "Transaction"
+    "shop": {
+      "type": "belongsTo",
+      "model": "ShopKeeper",
+      "foreignKey": "shopKeeperId"
     }
   },
   "acls": [],

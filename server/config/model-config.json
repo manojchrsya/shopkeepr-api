@@ -106,5 +106,9 @@
   "ShopKeeper": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "Transaction": {
+    "dataSource": "mongodb",
+    "public": false
   }
 }

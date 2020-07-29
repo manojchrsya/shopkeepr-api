@@ -37,4 +37,44 @@ module.exports = function (Customer) {
     }
     return Promise.resolve();
   });
+
+  Customer.prototype.addTransaction = function (ctx, options) {
+    const { amount, type, remarks } = options;
+    const transaction = {
+      shopKeeperId: ctx.req.accessToken.shopKeeperId,
+      customerId: this.id,
+      amount,
+      type,
+      remarks,
+    };
+    return Transaction.create(transaction);
+  };
+
+  Customer.remoteMethod('prototype.addTransaction', {
+    description: 'Save customer traction details.',
+    accepts: [
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
+
+  Customer.prototype.getDetails = async function () {
+    // const trasactionDetails = await Transaction.getDetails({ customerId: this.id });
+    return Customer.findById(this.id, { include: 'transactions' });
+  };
+
+  Customer.remoteMethod('prototype.getDetails', {
+    description: 'Get customer transaction details.',
+    accepts: [
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
 };
