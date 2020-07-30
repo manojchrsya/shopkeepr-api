@@ -16,11 +16,20 @@ module.exports = function (Transaction) {
 
   Transaction.getDetails = async function (options) {
     const { customerId } = options;
-    const data = {};
-    const invoiceData = await Transaction.findOneById(customerId, { include: 'transactions' });
-    const paymentDetails = invoiceData.payments() || [];
-    data.totalPaidAmount = paymentDetails.length > 0 ? parseNumber(_.sumBy(paymentDetails, 'amount')) : 0;
-    data.outStandingAmount = parseNumber(data.invoiceAmount - data.totalPaidAmount);
-    return data;
+    const collection = await Transaction.getDBConnection();
+    let transactionDetail = await collection.aggregate([
+      { $match: { customerId } },
+      { $group: { _id: { customerId: '$customerId', type: '$type' }, total: { $sum: '$amount' } } },
+      { $project: { _id: 0, customerId: '$_id.customerId', type: '$_id.type', total: '$total' } },
+    ]).toArray();
+    transactionDetail = _.groupBy(transactionDetail, 'type');
+    const credit = _.first(transactionDetail['CREDIT']) || { total: 0 };
+    const debit = _.first(transactionDetail['DEBIT']) || { total: 0 };
+    const total = parseNumber((credit.total || 0) + (debit.total || 0));
+    let dueAmount = 0;
+    let advanceAmount = 0;
+    if (credit.total > debit.total) advanceAmount = parseNumber(credit.total - debit.total);
+    if (debit.total > credit.total) dueAmount = parseNumber(debit.total - credit.total);
+    return { credit, debit, dueAmount, advanceAmount, total }
   };
 };

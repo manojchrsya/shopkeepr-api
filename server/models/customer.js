@@ -63,8 +63,12 @@ module.exports = function (Customer) {
   });
 
   Customer.prototype.getDetails = async function () {
-    // const trasactionDetails = await Transaction.getDetails({ customerId: this.id });
-    return Customer.findById(this.id, { include: 'transactions' });
+    const [summary, customer] = await Promise.all([
+      Transaction.getDetails({ customerId: this.id }),
+      Customer.findById(this.id, { include: 'transactions' }),
+    ]);
+    customer.summary = summary;
+    return customer;
   };
 
   Customer.remoteMethod('prototype.getDetails', {
