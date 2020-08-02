@@ -65,7 +65,7 @@ boot(app, bootOptions, (error) => {
 
   if (LoopbackConsole.activated()) {
     LoopbackConsole.start(app, {
-      prompt: 'dearo > ',
+      prompt: 'shopkeepr > ',
       historyPath: `${process.cwd()}/data/console-history`,
     });
   } else if (require.main === module) {

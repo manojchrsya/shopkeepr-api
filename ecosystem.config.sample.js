@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'dearo-api',
+      name: 'shopkeepr-api',
       script: 'server/server.js',
       combine_logs: true,
       exec_mode: 'cluster',
@@ -10,11 +10,10 @@ module.exports = {
         // One of: dev, beta, staging, prod
         NODE_ENV: 'example',
         NODE_SERVER_PORT: 3200,
-        SERVER_BASE_URL: 'https://example-base.dearo.in',
 
         // Elasticsearch Details
         ELASTICSEARCH_PROTOCOL: 'https',
-        ELASTICSEARCH_HOST: 'es-dearo-host',
+        ELASTICSEARCH_HOST: 'es-shopkeepr-host',
         ELASTICSEARCH_PORT: '9200',
 
         // Mongo details

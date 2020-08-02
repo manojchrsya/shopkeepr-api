@@ -45,7 +45,7 @@ services:
     build: ./docker-es/
     container_name: ${SK_NAMESPACE}-es-${SK_ENVIRONMENT}
     environment:
-      - cluster.name=dearo-cluster
+      - cluster.name=shopkeepr-cluster
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:

@@ -57,7 +57,7 @@ class Logger {
   addFile(options) {
     options = _.defaults(options, {
       timestamp: true,
-      filename: path.resolve(`${this.getLogDir()}/dearo.log`),
+      filename: path.resolve(`${this.getLogDir()}/shopkeepr.log`),
       maxsize: 10 * 1024 * 1024,
     });
 
