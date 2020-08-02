@@ -8,6 +8,8 @@ module.exports = function (Customer) {
     CustomerModel.validatesFormatOf('mobile', {
       with: /^[6789]\d{9}$/,
       message: 'is not valid mobile number',
+      allowNull: true,
+      allowBlank: true,
     });
 
     CustomerModel.validatesFormatOf('alternateMobile', {
@@ -38,7 +40,7 @@ module.exports = function (Customer) {
     return Promise.resolve();
   });
 
-  Customer.prototype.addTransaction = function (ctx, options) {
+  Customer.prototype.addTransaction = async function (ctx, options) {
     const { amount, type, remarks } = options;
     const transaction = {
       shopKeeperId: ctx.req.accessToken.shopKeeperId,
@@ -47,7 +49,8 @@ module.exports = function (Customer) {
       type,
       remarks,
     };
-    return Transaction.create(transaction);
+    await Transaction.create(transaction);
+    return this.getDetails();
   };
 
   Customer.remoteMethod('prototype.addTransaction', {
@@ -65,7 +68,7 @@ module.exports = function (Customer) {
   Customer.prototype.getDetails = async function () {
     const [summary, customer] = await Promise.all([
       Transaction.getDetails({ customerId: this.id }),
-      Customer.findById(this.id, { include: 'transactions' }),
+      Customer.findById(this.id, { include: { relation: 'transactions', scope: { order: 'createdOn desc' } } }),
     ]);
     customer.summary = summary;
     return customer;

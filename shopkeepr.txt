@@ -24,3 +24,6 @@ SkACL.create({ model: 'Customer',property: 'find', accessType: 'READ', permissio
 SkACL.create({ model: 'Customer',property: 'patchAttributes', accessType: 'WRITE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'Customer',property: 'addTransaction', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'Customer',property: 'getDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+
+SkACL.create({ model: 'ShopKeeper',property: 'getTxnDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'ShopKeeper',property: 'dashboard', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const moment = require('moment');
 
 module.exports = function (ShopKeeper) {
   ShopKeeper.STATUS_ACTIVE = 'ACTIVE';
@@ -81,4 +82,64 @@ module.exports = function (ShopKeeper) {
     };
     return SkCluster.findOne(query);
   };
+
+  ShopKeeper.getTxnDetails = async function (options = {}, ctx) {
+    const { shopKeeperId } = ctx.req.accessToken;
+    const startDate = options.date ? moment(options.date).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+    const endDate = moment(startDate).add(1, 'days').format('YYYY-MM-DD');
+    const query = {
+      where: {
+        shopKeeperId,
+        and: [
+          { createdOn: { gte: startDate } },
+          { createdOn: { lt: endDate } },
+        ],
+      },
+      order: 'createdOn desc',
+      include: {
+        relation: 'customer',
+        scope: {
+          fields: ['id', 'name'],
+        },
+      },
+    };
+    const [summary, transactions] = await Promise.all([
+      Transaction.getDetails({ shopKeeperId, startDate, endDate }),
+      Transaction.find(query),
+    ]);
+    return { transactions, summary };
+  };
+
+  ShopKeeper.remoteMethod('getTxnDetails', {
+    description: 'Get shopkeepers transaction details.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'query' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
+
+  ShopKeeper.dashboard = async function (ctx) {
+    const { shopKeeperId } = ctx.req.accessToken;
+    const startDate = moment().startOf('month').format('YYYY-MM-DD');
+    const endDate = moment().add(1, 'days').format('YYYY-MM-DD');
+    const summary = await Transaction.getDetails({ shopKeeperId, startDate, endDate });
+    summary.month = (moment().month(moment().month()).format('MMMM'));
+    const lastWeek = await Transaction.getLastWeekDetails({ shopKeeperId });
+    return { summary, lastWeek };
+  };
+
+  ShopKeeper.remoteMethod('dashboard', {
+    description: 'Get shopkeepers dashoard details.',
+    accepts: [
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
 };
