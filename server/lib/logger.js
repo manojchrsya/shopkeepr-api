@@ -30,7 +30,7 @@ class Logger {
       this.addFile();
     } else if (env === 'prod') {
       this.addFile();
-      this.addS3Stream();
+      // this.addS3Stream();
     }
   }
 
