@@ -19,6 +19,10 @@ module.exports = {
         // Mongo details
         MONGODB_HOST: 'mongohost',
         MONGODB_PORT: 27017,
+        MONGODB_URL: 'mongo://mongodb/dbname',
+        MONGODB_USER: 'test',
+        MONGODB_PASSWORD: 'test@123',
+        MONGODB_PROTOCOL: 'mongodb',
 
         // Redis Details
         REDIS_HOST: 'localhost',
