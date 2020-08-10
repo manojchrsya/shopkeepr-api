@@ -4,7 +4,8 @@ const moment = require('moment');
 module.exports = function (Transaction) {
   Transaction.TYPE_CREDIT = 'CREDIT';
   Transaction.TYPE_DEBIT = 'DEBIT';
-  Transaction.VALID_TYPES = [Transaction.TYPE_CREDIT, Transaction.TYPE_DEBIT];
+  Transaction.TYPE_SETTLED = 'SETTLED';
+  Transaction.VALID_TYPES = [Transaction.TYPE_CREDIT, Transaction.TYPE_DEBIT, Transaction.TYPE_SETTLED];
 
   Transaction.setup = function () {
     const TransactionModel = this;
@@ -16,19 +17,28 @@ module.exports = function (Transaction) {
   Transaction.setup();
 
   Transaction.getDetails = async function (options) {
-    const collection = await Transaction.getDBConnection();
+    const [transactionColl, invoiceColl] = await Promise.all([
+      Transaction.getDBConnection(),
+      Invoice.getDBConnection(),
+    ]);
     const query = Transaction.generateQuery(options);
-    let transactionDetail = await collection.aggregate(query).toArray();
+    // eslint-disable-next-line prefer-const
+    let [transactionDetail, invoiceDetail] = await Promise.all([
+      transactionColl.aggregate(query).toArray(),
+      invoiceColl.aggregate(query).toArray(),
+    ]);
     transactionDetail = _.groupBy(transactionDetail, 'type');
+    const revenue = _.first(invoiceDetail) || { total: 0 };
     const credit = _.first(transactionDetail.CREDIT) || { total: 0 };
     const debit = _.first(transactionDetail.DEBIT) || { total: 0 };
-    const total = parseNumber((credit.total || 0) + (debit.total || 0));
+    const settled = _.first(transactionDetail.SETTLED) || { total: 0 };
+    const total = parseNumber((credit.total || 0) + (debit.total || 0) + (settled.total || 0));
     let dueAmount = 0;
     let advanceAmount = 0;
     if (credit.total > debit.total) advanceAmount = parseNumber(credit.total - debit.total);
     if (debit.total > credit.total) dueAmount = parseNumber(debit.total - credit.total);
     return {
-      credit, debit, dueAmount, advanceAmount, total,
+      credit, debit, dueAmount, advanceAmount, total, revenue,
     };
   };
 

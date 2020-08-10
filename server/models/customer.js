@@ -41,15 +41,63 @@ module.exports = function (Customer) {
   });
 
   Customer.prototype.addTransaction = async function (ctx, options) {
-    const { amount, type, remarks } = options;
-    const transaction = {
-      shopKeeperId: ctx.req.accessToken.shopKeeperId,
-      customerId: this.id,
-      amount,
-      type,
-      remarks,
-    };
-    await Transaction.create(transaction);
+    const { remarks } = options;
+    const actualAmount = options.actualAmount ? parseNumber(options.actualAmount) : 0;
+    const receivedAmount = options.receivedAmount ? parseNumber(options.receivedAmount) : 0;
+    const txnPromise = [];
+    let settledAmount = 0;
+    let creditAmount = 0;
+    let debitAmount = 0;
+    let invoice = {};
+    // create invoice entry
+    if (actualAmount > 0) {
+      invoice = await Invoice.create({
+        shopKeeperId: ctx.req.accessToken.shopKeeperId,
+        customerId: this.id,
+        amount: actualAmount,
+        date: new Date(),
+      });
+    }
+    // calculate settle, credit and debit amount
+    if ((receivedAmount >= actualAmount)) {
+      settledAmount = actualAmount;
+      creditAmount = parseNumber(receivedAmount - actualAmount);
+    } else if (receivedAmount < actualAmount) {
+      settledAmount = receivedAmount;
+      debitAmount = parseNumber(actualAmount - receivedAmount);
+    }
+
+    if (settledAmount > 0) {
+      txnPromise.push(Transaction.create({
+        shopKeeperId: ctx.req.accessToken.shopKeeperId,
+        customerId: this.id,
+        amount: settledAmount,
+        remarks,
+        type: Transaction.TYPE_SETTLED,
+        invoiceId: invoice.id || '',
+      }));
+    }
+    if (creditAmount > 0) {
+      txnPromise.push(Transaction.create({
+        shopKeeperId: ctx.req.accessToken.shopKeeperId,
+        customerId: this.id,
+        amount: creditAmount,
+        remarks: settledAmount !== 0 ? 'Credit Amount' : remarks,
+        type: Transaction.TYPE_CREDIT,
+        invoiceId: invoice.id || '',
+      }));
+    }
+    if (debitAmount > 0) {
+      txnPromise.push(Transaction.create({
+        shopKeeperId: ctx.req.accessToken.shopKeeperId,
+        customerId: this.id,
+        amount: debitAmount,
+        remarks: settledAmount !== 0 ? 'Debit Amount' : remarks,
+        type: Transaction.TYPE_DEBIT,
+        invoiceId: invoice.id || '',
+      }));
+    }
+    await Promise.all(txnPromise);
     return this.getDetails();
   };
 

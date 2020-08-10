@@ -27,3 +27,47 @@ SkACL.create({ model: 'Customer',property: 'getDetails', accessType: 'READ', per
 
 SkACL.create({ model: 'ShopKeeper',property: 'getTxnDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'ShopKeeper',property: 'dashboard', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+
+credit
+debit
+settled
+
+total amount => 500
+received amount => 0
+
+settle 0
+
+total amount => 600
+received amount => 800
+
+settle => 600
+
+total amount => 0
+received amount => 300
+
+settle => 0
+
+total amount => 400
+received amount => 300
+
+if ((recevei >= total)) {
+  settle = total
+} else if ( (received < total)) {
+  settle = received
+}
+
+
+if (total > 0) {
+  transaction.create({amount: total, type: 'settled'})
+}
+if (received <= total) {
+  if ((total - received) > 0) {
+    transaction.create({amount: (total - received), type: 'debit'})
+  }
+  settle = received
+} else {
+  if ((received - total) > 0) {
+    transaction.create({amount: (received - total), type: 'credit'})
+  }
+  settle = total
+}
