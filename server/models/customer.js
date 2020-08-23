@@ -115,10 +115,10 @@ module.exports = function (Customer) {
 
   Customer.prototype.getDetails = async function () {
     const [summary, customer] = await Promise.all([
-      Transaction.getDetails({ customerId: this.id }),
+      Transaction.getDetails({ customerIds: [this.id], type: Customer.modelName }),
       Customer.findById(this.id, { include: { relation: 'transactions', scope: { order: 'createdOn desc' } } }),
     ]);
-    customer.summary = summary;
+    customer.summary = _.first(summary);
     return customer;
   };
 
@@ -131,5 +131,47 @@ module.exports = function (Customer) {
       arg: 'ctx', type: 'object', root: true,
     },
     http: { verb: 'get' },
+  });
+
+  Customer.getTxnDetail = async function (options = {}) {
+    const { txnId } = options;
+    return Transaction.findOneById(txnId, { include: 'customer' });
+  };
+
+  Customer.remoteMethod('getTxnDetail', {
+    description: 'Get customer transaction details.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'query' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
+
+  Customer.deleteTransaction = async function (options = {}) {
+    const { txnId } = options;
+    const txnDetail = await Transaction.findOneById(txnId);
+    if (!txnDetail) throw new BadRequestError('Invalid Transaction Id.');
+    const promises = [];
+    if (txnDetail.invoiceId) {
+      promises.push(Invoice.deleteById(txnDetail.invoiceId));
+      promises.push(Transaction.destroyAll({ invoiceId: txnDetail.invoiceId }));
+    } else {
+      promises.push(Transaction.deleteById(txnId));
+    }
+    await Promise.all(promises);
+    return true;
+  };
+
+  Customer.remoteMethod('deleteTransaction', {
+    description: 'Get customer transaction details.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
   });
 };

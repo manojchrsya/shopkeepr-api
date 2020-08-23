@@ -107,7 +107,7 @@ module.exports = function (ShopKeeper) {
       Transaction.getDetails({ shopKeeperId, startDate, endDate }),
       Transaction.find(query),
     ]);
-    return { transactions, summary };
+    return { transactions, summary: _.first(summary) };
   };
 
   ShopKeeper.remoteMethod('getTxnDetails', {
@@ -126,7 +126,8 @@ module.exports = function (ShopKeeper) {
     const { shopKeeperId } = ctx.req.accessToken;
     const startDate = moment().startOf('month').format('YYYY-MM-DD');
     const endDate = moment().add(1, 'days').format('YYYY-MM-DD');
-    const summary = await Transaction.getDetails({ shopKeeperId, startDate, endDate });
+    const txnSummary = await Transaction.getDetails({ shopKeeperId, startDate, endDate });
+    const summary = _.first(txnSummary);
     summary.month = (moment().month(moment().month()).format('MMMM'));
     const lastWeek = await Transaction.getLastWeekDetails({ shopKeeperId });
     return { summary, lastWeek };
@@ -134,6 +135,30 @@ module.exports = function (ShopKeeper) {
 
   ShopKeeper.remoteMethod('dashboard', {
     description: 'Get shopkeepers dashoard details.',
+    accepts: [
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
+
+  ShopKeeper.getCustomers = async function (ctx) {
+    const { shopKeeperId } = ctx.req.accessToken;
+    const customers = await Customer.findByShopKeeperId(shopKeeperId, { order: 'updatedOn desc' });
+    const customerIds = _.map(customers, 'id');
+    const txnDetails = await Transaction.getDetails({ customerIds, type: Customer.modelName });
+    const customerTxns = _.groupBy(txnDetails, 'customerId');
+    return customers.map((customer) => {
+      const customerTxn = _.first(customerTxns[customer.id]) || {};
+      customer.summary = customerTxn;
+      return customer;
+    });
+  };
+
+  ShopKeeper.remoteMethod('getCustomers', {
+    description: 'Get customer listings with summary.',
     accepts: [
       { arg: 'ctx', type: 'object', http: { source: 'context' } },
     ],

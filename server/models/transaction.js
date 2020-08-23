@@ -27,31 +27,43 @@ module.exports = function (Transaction) {
       transactionColl.aggregate(query).toArray(),
       invoiceColl.aggregate(query).toArray(),
     ]);
-    transactionDetail = _.groupBy(transactionDetail, 'type');
-    const revenue = _.first(invoiceDetail) || { total: 0 };
-    const credit = _.first(transactionDetail.CREDIT) || { total: 0 };
-    const debit = _.first(transactionDetail.DEBIT) || { total: 0 };
-    const settled = _.first(transactionDetail.SETTLED) || { total: 0 };
-    const total = parseNumber((credit.total || 0) + (debit.total || 0) + (settled.total || 0));
-    let dueAmount = 0;
-    let advanceAmount = 0;
-    if (credit.total > debit.total) advanceAmount = parseNumber(credit.total - debit.total);
-    if (debit.total > credit.total) dueAmount = parseNumber(debit.total - credit.total);
-    return {
-      credit, debit, dueAmount, advanceAmount, total, revenue,
-    };
+    const results = [];
+    const groupId = options.type === Customer.modelName ? 'customerId' : 'shopKeeperId';
+    const customerTxns = _.groupBy(transactionDetail, groupId);
+    const customerInvoices = _.groupBy(invoiceDetail, groupId);
+    _.keys(customerTxns).forEach((data) => {
+      const txnDetail = _.groupBy(customerTxns[data], 'type');
+      let revenue = { total: 0 };
+      if (customerInvoices[data]) {
+        revenue = _.first(customerInvoices[data]);
+      }
+      const credit = _.first(txnDetail.CREDIT) || { total: 0 };
+      const debit = _.first(txnDetail.DEBIT) || { total: 0 };
+      const settled = _.first(txnDetail.SETTLED) || { total: 0 };
+      const total = parseNumber((credit.total || 0) + (debit.total || 0) + (settled.total || 0));
+      let dueAmount = 0;
+      let advanceAmount = 0;
+      if (credit.total > debit.total) advanceAmount = parseNumber(credit.total - debit.total);
+      if (debit.total > credit.total) dueAmount = parseNumber(debit.total - credit.total);
+      const details = {};
+      details[groupId] = data;
+      results.push({
+        ...details, credit, debit, dueAmount, advanceAmount, total, revenue,
+      });
+    });
+    return results;
   };
 
   Transaction.generateQuery = function (options) {
     const {
-      customerId,
+      customerIds,
       shopKeeperId,
       startDate,
       endDate,
     } = options;
     const query = [];
-    if (customerId) {
-      query.push({ $match: { customerId } });
+    if (customerIds && customerIds.length > 0) {
+      query.push({ $match: { customerId: { $in: customerIds } } });
       query.push({ $group: { _id: { customerId: '$customerId', type: '$type' }, total: { $sum: '$amount' } } });
       // eslint-disable-next-line object-curly-newline
       query.push({ $project: { _id: 0, customerId: '$_id.customerId', type: '$_id.type', total: '$total' } });

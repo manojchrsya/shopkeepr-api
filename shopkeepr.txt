@@ -71,3 +71,8 @@ if (received <= total) {
   }
   settle = total
 }
+
+
+SkRole.findOneById('5df601d32f557201e6bd913c').then(data => { data.routes = [...data.routes, '/transactions/detail']; return data.save(); })
+SkACL.create({ model: 'Customer',property: 'getTxnDetail', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Customer',property: 'deleteTransaction', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
