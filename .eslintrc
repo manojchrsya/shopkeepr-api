@@ -83,6 +83,7 @@
       "HsnMaster": true,
       "ShopKeeper": true,
       "SkUserConfig": true,
-      "Transaction": true
+      "Transaction": true,
+      "Product": true
     }
   }

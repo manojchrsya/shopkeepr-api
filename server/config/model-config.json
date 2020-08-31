@@ -110,5 +110,9 @@
   "Transaction": {
     "dataSource": "mongodb",
     "public": false
+  },
+  "Product": {
+    "dataSource": "mongodb",
+    "public": true
   }
 }

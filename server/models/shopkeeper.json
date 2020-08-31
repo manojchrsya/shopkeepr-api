@@ -23,10 +23,10 @@
       "type": "string",
       "required": true
     },
-    "email": {
+    "tagLine": {
       "type": "string"
     },
-    "registeredName": {
+    "email": {
       "type": "string"
     },
     "contactPerson": {
@@ -74,6 +74,17 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "order": {
+      "type": "object",
+      "properties": {
+        "minimumAmount": {
+          "type": "number"
+        },
+        "deliveryTime": {
+          "type": "string"
         }
       }
     }

@@ -38,7 +38,7 @@ class ShopKeeperData extends BaseMasterData {
     const preparedData = {
       shopkeeper: {
         displayName: data.displayName,
-        registeredName: data.registeredName,
+        tagLine: data.tagLine,
         code: data.code,
         mobile: data.contactNumber,
         contactPerson: data.contactPerson,
@@ -56,6 +56,10 @@ class ShopKeeperData extends BaseMasterData {
           upi: {
             id: data.upiId,
           },
+        },
+        order: {
+          minimumAmount: data.minimumOrderAmount,
+          deliveryTime: data.deliveryTime,
         },
       },
       address: [{
