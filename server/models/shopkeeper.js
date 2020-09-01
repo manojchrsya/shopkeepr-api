@@ -127,7 +127,7 @@ module.exports = function (ShopKeeper) {
     const startDate = moment().startOf('month').format('YYYY-MM-DD');
     const endDate = moment().add(1, 'days').format('YYYY-MM-DD');
     const txnSummary = await Transaction.getDetails({ shopKeeperId, startDate, endDate });
-    const summary = _.first(txnSummary);
+    const summary = _.first(txnSummary) || {};
     summary.month = (moment().month(moment().month()).format('MMMM'));
     const lastWeek = await Transaction.getLastWeekDetails({ shopKeeperId });
     return { summary, lastWeek };
