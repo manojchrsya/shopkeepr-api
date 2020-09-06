@@ -84,6 +84,7 @@
       "ShopKeeper": true,
       "SkUserConfig": true,
       "Transaction": true,
-      "Product": true
+      "Product": true,
+      "ShopBucket": true
     }
   }

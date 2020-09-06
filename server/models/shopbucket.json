@@ -1,5 +1,5 @@
 {
-  "name": "Product",
+  "name": "ShopBucket",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -18,34 +18,29 @@
       "type": "string",
       "required": true
     },
+    "customerId": {
+      "type": "string",
+      "required": true
+    },
+    "productId": {
+      "type": "string",
+      "required": true
+    },
     "title": {
       "type": "string",
       "required": true
     },
-    "description": {
-      "type": "string"
-    },
-    "status": {
-      "type": "string"
-    },
     "price": {
-      "type": "object",
-      "properties": [{
-        "unit": {
-          "type": "string"
-        },
-        "value": {
-          "type": "number"
-        }
-      }]
+      "type": "number"
+    },
+    "quantity": {
+      "type": "number"
+    },
+    "amount": {
+      "type": "number"
     },
     "unit": {
       "type": "string"
-    },
-    "units": {
-      "type": [
-        "string"
-      ]
     }
   },
   "validations": [],

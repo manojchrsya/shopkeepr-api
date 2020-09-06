@@ -83,3 +83,8 @@ SkRole.findOneById('5df601d32f557201e6bd913c').then(data => { data.routes = [...
 SkACL.create({ model: 'Product', property: '*', accessType: '*', permission: 'DENY', principalType: 'ROLE', principalId: '$everyone'})
 SkACL.create({ model: 'Product',property: 'find', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'Product',property: 'create', accessType: 'WRITE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+
+SkACL.create({ model: 'Customer',property: 'updateBucket', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'ShopKeeper',property: 'getProducts', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Customer',property: 'findDetails', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
+SkACL.create({ model: 'Customer',property: 'getBucket', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})

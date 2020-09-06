@@ -174,4 +174,104 @@ module.exports = function (Customer) {
     },
     http: { verb: 'post' },
   });
+
+  Customer.prototype.updateBucket = async function (options = {}) {
+    const { productId, shopKeeperId } = options;
+    const data = {
+      productId,
+      shopKeeperId,
+      customerId: this.id,
+      title: options.title,
+      unit: options.unit,
+      price: parseNumber(options.price) || 0,
+      quantity: parseNumber(options.quantity) || 0,
+    };
+    data.amount = parseNumber(data.price * data.quantity);
+    const [shopBucket, created] = await ShopBucket.findOrCreate({
+      where: {
+        productId: data.productId,
+        customerId: data.customerId,
+        shopKeeperId: data.shopKeeperId,
+      },
+    }, data);
+    // remove product if quantity is 0
+    if (data.quantity <= 0 && shopBucket) {
+      await shopBucket.delete();
+      return shopBucket;
+    } else if (created) {
+      return shopBucket;
+    }
+    shopBucket.unit = data.unit;
+    shopBucket.price = data.price;
+    shopBucket.quantity = data.quantity;
+    shopBucket.amount = data.amount;
+    return shopBucket.save();
+  };
+
+  Customer.remoteMethod('prototype.updateBucket', {
+    description: 'Update shopping bucket details.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
+
+  Customer.findDetails = async function (options = {}) {
+    const { shopKeeperId, mobile, name } = options;
+    // validate details
+    const errors = {};
+    if (!shopKeeperId) {
+      errors.shopKeeperId = ['field is required.'];
+    }
+    if (!mobile) {
+      errors.mobile = ['field is required.'];
+    }
+    if (!name) {
+      errors.name = ['field is required.'];
+    }
+    if (!_.isEmpty(errors)) {
+      const error = new BadRequestError('Invalid user data.');
+      error.details = {
+        messages: errors,
+      };
+      throw error;
+    }
+    if (!shopKeeperId) throw new BadRequestError('ShopKeeperId is required.');
+    const shopKeeperCount = await ShopKeeper.count({ id: shopKeeperId });
+    if (!shopKeeperCount) throw new BadRequestError('Invalid ShopKeeperId.');
+    // eslint-disable-next-line no-unused-vars
+    const [customer, created] = await Customer.findOrCreate({
+      where: { shopKeeperId, mobile },
+    }, { shopKeeperId, mobile, name });
+    return _.pick(customer, ['id', 'name', 'mobile']);
+  };
+
+  Customer.remoteMethod('findDetails', {
+    description: 'Get customer transaction details.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
+  Customer.prototype.getBucket = async function (options = {}) {
+    const { shopKeeperId } = options;
+    return ShopBucket.find({ where: { customerId: this.id, shopKeeperId } });
+  };
+
+  Customer.remoteMethod('prototype.getBucket', {
+    description: 'Get customer bucket details.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'query' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
 };

@@ -114,5 +114,9 @@
   "Product": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "ShopBucket": {
+    "dataSource": "mongodb",
+    "public": false
   }
 }

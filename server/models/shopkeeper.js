@@ -173,4 +173,35 @@ module.exports = function (ShopKeeper) {
     },
     http: { verb: 'get' },
   });
+
+  ShopKeeper.prototype.getProducts = async function (options = {}) {
+    const { customerId } = options;
+    const products = await Product.find({ where: { shopKeeperId: this.id } });
+    if (customerId) {
+      const bucket = await ShopBucket.find({ where: { customerId, shopKeeperId: this.id } });
+      if (bucket.length) {
+        const buckerProducts = _.groupBy(bucket, 'productId');
+        products.map((product) => {
+          if (buckerProducts[product.id] && buckerProducts[product.id].length > 0) {
+            const bucketProduct = _.first(buckerProducts[product.id]);
+            product.unit = bucketProduct.unit;
+            product.quantity = bucketProduct.quantity;
+          }
+          return product;
+        });
+      }
+    }
+    return products;
+  };
+
+  ShopKeeper.remoteMethod('prototype.getProducts', {
+    description: 'Get shopkeeper products list.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'query' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
 };
