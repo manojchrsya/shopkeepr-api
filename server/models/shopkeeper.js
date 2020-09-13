@@ -253,9 +253,9 @@ module.exports = function (ShopKeeper) {
       query.where.customerId = customerId;
     }
     if (orderType === 'open') {
-      query.where.status = { nin: [Order.STATUS_DELIVERED, Order.STATUS_CLOSED] };
+      query.where.status = { nin: [Order.STATUS_DELIVERED, Order.STATUS_CLOSED, Order.STATUS_CANCELLED] };
     } else if (orderType === 'closed') {
-      query.where.status = { inq: [Order.STATUS_DELIVERED, Order.STATUS_CLOSED] };
+      query.where.status = { inq: [Order.STATUS_DELIVERED, Order.STATUS_CLOSED, Order.STATUS_CANCELLED] };
     }
     query.include = [];
     query.include.push({ relation: 'customer', scope: { fields: ['name', 'mobile'] } });
