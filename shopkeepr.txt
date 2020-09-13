@@ -78,7 +78,9 @@ SkACL.create({ model: 'Customer',property: 'getTxnDetail', accessType: 'READ', p
 SkACL.create({ model: 'Customer',property: 'deleteTransaction', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'ShopKeeper',property: 'getCustomers', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 
-SkRole.findOneById('5df601d32f557201e6bd913c').then(data => { data.routes = [...data.routes, '/products', '/bucket']; return data.save(); })
+SkRole.findOneById('5df601d32f557201e6bd913c').then(data => { data.routes = Array.from(new Set([...data.routes, '/products', '/bucket', '/orders/list', '/orders/detail'])); return data.save(); })
+
+
 
 SkACL.create({ model: 'Product', property: '*', accessType: '*', permission: 'DENY', principalType: 'ROLE', principalId: '$everyone'})
 SkACL.create({ model: 'Product',property: 'find', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
@@ -88,3 +90,7 @@ SkACL.create({ model: 'Customer',property: 'updateBucket', accessType: 'EXECUTE'
 SkACL.create({ model: 'ShopKeeper',property: 'getProducts', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'Customer',property: 'findDetails', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
 SkACL.create({ model: 'Customer',property: 'getBucket', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
+
+SkACL.create({ model: 'ShopKeeper',property: 'placeOrder', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
+SkACL.create({ model: 'ShopKeeper',property: 'getOrders', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
+SkACL.create({ model: 'ShopKeeper',property: 'getOrderDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})

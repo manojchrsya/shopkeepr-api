@@ -13,7 +13,6 @@ module.exports = function (ShopBucket) {
     return ShopBucketModel;
   };
   ShopBucket.setup();
-  // ShopBucketModel.validateAsync('technicianId', isValidTechnicianId, { message: 'invalid technicianId.' });
   ShopBucket.observe('before save', async (ctx) => {
     if (ctx.isNewInstance) {
       if (ctx.options.accessToken && ctx.options.accessToken.shopKeeperId) {

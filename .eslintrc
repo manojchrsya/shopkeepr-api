@@ -85,6 +85,8 @@
       "SkUserConfig": true,
       "Transaction": true,
       "Product": true,
-      "ShopBucket": true
+      "ShopBucket": true,
+      "Order": true,
+      "OrderLineItem": true
     }
   }

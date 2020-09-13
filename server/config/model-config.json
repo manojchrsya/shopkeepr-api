@@ -118,5 +118,13 @@
   "ShopBucket": {
     "dataSource": "mongodb",
     "public": false
+  },
+  "Order": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "OrderLineItem": {
+    "dataSource": "mongodb",
+    "public": false
   }
 }

@@ -1,0 +1,64 @@
+{
+  "name": "Order",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "IdInject": {}
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "orderNumber": {
+      "type": "string"
+    },
+    "shopKeeperId": {
+      "type": "string",
+      "required": true
+    },
+    "customerId": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "itemCount": {
+      "type": "number"
+    },
+    "amount": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "shop": {
+      "type": "belongsTo",
+      "model": "ShopKeeper",
+      "foreignKey": "shopKeeperId"
+    },
+    "customer": {
+      "type": "belongsTo",
+      "model": "Customer",
+      "foreignKey": "customerId"
+    },
+    "lineItems": {
+      "type": "hasMany",
+      "model": "OrderLineItem",
+      "foreignKey": "orderId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

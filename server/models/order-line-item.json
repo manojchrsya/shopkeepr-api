@@ -1,0 +1,65 @@
+{
+  "name": "OrderLineItem",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "IdInject": {}
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": false
+    },
+    "orderId": {
+      "type": "string",
+      "required": true
+    },
+    "shopKeeperId": {
+      "type": "string",
+      "required": true
+    },
+    "customerId": {
+      "type": "string",
+      "required": true
+    },
+    "productId": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "price": {
+      "type": "number"
+    },
+    "quantity": {
+      "type": "number"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "unit": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "shop": {
+      "type": "belongsTo",
+      "model": "ShopKeeper",
+      "foreignKey": "shopKeeperId"
+    },
+    "customer": {
+      "type": "belongsTo",
+      "model": "Customer",
+      "foreignKey": "customerId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

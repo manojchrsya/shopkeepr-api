@@ -204,4 +204,126 @@ module.exports = function (ShopKeeper) {
     },
     http: { verb: 'get' },
   });
+
+  ShopKeeper.prototype.placeOrder = async function (options = {}) {
+    const { customerId, description } = options;
+    if (!customerId) throw new BadRequestError('CustomerId is required.');
+    const products = await ShopBucket.find({ where: { shopKeeperId: this.id, customerId } });
+    const itemCount = products.length;
+    if (itemCount === 0) throw new BadRequestError('No Item found in basket.');
+    const amount = _.sumBy(products, 'amount') || 0;
+    const order = await Order.create({
+      shopKeeperId: this.id,
+      customerId,
+      description,
+      amount,
+      itemCount,
+    });
+    const data = [];
+    // add orderId in product line items and push in new array
+    products.forEach((product) => {
+      product.orderId = order.id;
+      data.push(_.omit(product, ['createdOn', 'updatedOn']));
+    });
+    // create order line item and remove product from bucket
+    await Promise.all([
+      OrderLineItem.create(data),
+      ShopBucket.destroyAll({ shopKeeperId: this.id, customerId }),
+    ]);
+    return order;
+  };
+
+  ShopKeeper.remoteMethod('prototype.placeOrder', {
+    description: 'Create customer order.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
+
+  ShopKeeper.getOrders = async function (options = {}, ctx) {
+    const { customerId, orderType } = options;
+    const query = { where: {} };
+    if (ctx && ctx.req && ctx.req.accessToken && ctx.req.accessToken.shopKeeperId) {
+      query.where.shopKeeperId = ctx.req.accessToken.shopKeeperId;
+    } else if (customerId) {
+      query.where.customerId = customerId;
+    }
+    if (orderType === 'open') {
+      query.where.status = { nin: [Order.STATUS_DELIVERED, Order.STATUS_CLOSED] };
+    } else if (orderType === 'closed') {
+      query.where.status = { inq: [Order.STATUS_DELIVERED, Order.STATUS_CLOSED] };
+    }
+    query.include = [];
+    query.include.push({ relation: 'customer', scope: { fields: ['name', 'mobile'] } });
+    query.include.push({ relation: 'shop', scope: { fields: ['name', 'mobile'] } });
+    query.order = 'updatedOn desc';
+    return Order.find(query);
+  };
+
+  ShopKeeper.remoteMethod('getOrders', {
+    description: 'Get shopkeeper or customer order list.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'query' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
+
+  ShopKeeper.getOrderDetails = async function (options = {}, ctx) {
+    const { customerId, orderId } = options;
+    if (!orderId) throw new BadRequestError('OrderId field is required.');
+    const query = { where: {} };
+    if (ctx && ctx.req && ctx.req.accessToken && ctx.req.accessToken.shopKeeperId) {
+      query.where.shopKeeperId = ctx.req.accessToken.shopKeeperId;
+    } else if (customerId) {
+      query.where.customerId = customerId;
+    }
+    query.where.id = orderId;
+    query.include = [];
+    query.include.push({ relation: 'customer', scope: { fields: ['name', 'mobile'] } });
+    query.include.push({ relation: 'shop', scope: { fields: ['name', 'mobile'] } });
+    query.include.push({ relation: 'lineItems' });
+    return Order.findOne(query);
+  };
+
+  ShopKeeper.remoteMethod('getOrderDetails', {
+    description: 'Get shopkeeper or customer order details.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'query' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
+
+  ShopKeeper.prototype.updateOrderStatus = async function (options = {}, ctx = {}) {
+    const { orderId, status } = options;
+    if (!orderId) throw new BadRequestError('orderId field is required.');
+    const { shopKeeperId } = ctx.req && ctx.req.accessToken;
+    const order = await Order.findOne({ where: { id: orderId, shopKeeperId } });
+    if (!order) throw new BadRequestError('Invalid orderId');
+    if (status) order.status = status;
+    return order.save();
+  };
+
+  ShopKeeper.remoteMethod('prototype.updateOrderStatus', {
+    description: 'Update order status.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
 };

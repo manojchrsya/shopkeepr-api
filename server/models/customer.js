@@ -177,6 +177,20 @@ module.exports = function (Customer) {
 
   Customer.prototype.updateBucket = async function (options = {}) {
     const { productId, shopKeeperId } = options;
+    const errors = {};
+    if (!shopKeeperId) {
+      errors.shopKeeperId = ['field is required.'];
+    }
+    if (!productId) {
+      errors.productId = ['field is required.'];
+    }
+    if (!_.isEmpty(errors)) {
+      const error = new BadRequestError('Invalid bucket data.');
+      error.details = {
+        messages: errors,
+      };
+      throw error;
+    }
     const data = {
       productId,
       shopKeeperId,
