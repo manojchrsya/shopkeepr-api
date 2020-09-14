@@ -94,3 +94,4 @@ SkACL.create({ model: 'Customer',property: 'getBucket', accessType: 'READ', perm
 SkACL.create({ model: 'ShopKeeper',property: 'placeOrder', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
 SkACL.create({ model: 'ShopKeeper',property: 'getOrders', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
 SkACL.create({ model: 'ShopKeeper',property: 'getOrderDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
+SkACL.create({ model: 'ShopKeeper',property: 'updateOrderStatus', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
