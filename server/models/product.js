@@ -2,7 +2,7 @@
 module.exports = function (Product) {
   Product.STATUS_ACTIVE = 'ACTIVE';
   Product.STATUS_INACTIVE = 'INACTIVE';
-  Product.VALID_UNITS = ['LTR', 'PCS', 'PKT', 'UNT'];
+  Product.VALID_UNITS = ['LTR', 'PCS', 'PKT', 'UNT', 'KG', 'GRAM'];
 
   Product.setup = function () {
     const ProductModel = this;
