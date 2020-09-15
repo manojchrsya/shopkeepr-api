@@ -26,6 +26,17 @@
     "tagLine": {
       "type": "string"
     },
+    "url": {
+      "type": "string"
+    },
+    "sms": {
+      "type": "object",
+      "property": {
+        "share": {
+          "type": "string"
+        }
+      }
+    },
     "email": {
       "type": "string"
     },
