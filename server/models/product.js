@@ -20,4 +20,20 @@ module.exports = function (Product) {
     }
     return Promise.resolve();
   });
+
+  Product.prototype.uploadProductImage = async function (options = {}, ctx) {
+    return FileStorage.uploadFile(ctx, { productId: this.id, ...options });
+  };
+
+  Product.remoteMethod('prototype.uploadProductImage', {
+    description: 'Upload product images',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
 };

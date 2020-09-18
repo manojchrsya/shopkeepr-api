@@ -18,5 +18,11 @@
     "database": 1,
     "name": "redis",
     "connector": "loopback-connector-redis"
+  },
+  "storage": {
+    "name": "storage",
+    "connector": "loopback-component-storage",
+    "provider": "filesystem",
+    "maxFileSize": "10485760"
   }
 }

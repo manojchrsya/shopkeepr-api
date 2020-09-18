@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "dev": "npm start",
-    "start": "node .",
+    "start": "DEBUG=loopback:security:* node .",
     "nodemon": "nodemon --legacy-watch --exec npm run dev",
     "posttest": "npm run lint && nsp check",
     "console": "node . --console"
@@ -42,7 +42,7 @@
     "loopback": "^3.17.1",
     "loopback-boot": "^2.6.5",
     "loopback-component-explorer": "^4.0.0",
-    "loopback-component-storage": "^3.2.0",
+    "loopback-component-storage": "^3.7.0",
     "loopback-connector-mongodb": "^3.2.1",
     "loopback-connector-redis": "^0.1.0",
     "loopback-connector-rest": "^3.3.0",
