@@ -6,6 +6,7 @@ const loopback = require('loopback');
 const boot = require('loopback-boot');
 
 const http = require('http');
+const path = require('path');
 const https = require('https');
 const sslConfig = require('./config/ssl-config');
 
@@ -14,6 +15,7 @@ const LoopbackConsole = require('loopback-console');
 const startTime = new Date();
 
 const app = loopback();
+app.use('/assets', loopback.static(path.resolve(__dirname, '../assets')));
 module.exports = app;
 
 app.start = (httpOnly = process.env.HTTP) => {

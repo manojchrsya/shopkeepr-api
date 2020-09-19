@@ -54,6 +54,11 @@
       "type": "belongsTo",
       "model": "ShopKeeper",
       "foreignKey": "shopKeeperId"
+    },
+    "images": {
+      "type": "hasMany",
+      "model": "FileResource",
+      "polymorphic": "uploadable"
     }
   },
   "acls": [],

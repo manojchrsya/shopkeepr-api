@@ -1,3 +1,4 @@
+const _ = require('lodash');
 
 module.exports = function (Product) {
   Product.STATUS_ACTIVE = 'ACTIVE';
@@ -19,5 +20,37 @@ module.exports = function (Product) {
       ctx.instance.status = ctx.instance.status || Product.STATUS_ACTIVE;
     }
     return Promise.resolve();
+  });
+  Product.allowedContentTypes = function () {
+    return ['image/jpg', 'image/jpeg', 'image/png'];
+  };
+  Product.prototype.getImagePath = function () {
+    return _.join([
+      ShopKeeper.modelName.toLowerCase(),
+      this.shopKeeperId,
+      Product.modelName.toLowerCase(),
+      this.id, 'images',
+    ], '/');
+  };
+
+  Product.prototype.uploadProductImage = async function (options = {}, ctx) {
+    return FileStorage.uploadFile(ctx, {
+      productId: this.id,
+      modelName: Product.modelName,
+      allowedContentTypes: Product.allowedContentTypes,
+      ...options,
+    });
+  };
+
+  Product.remoteMethod('prototype.uploadProductImage', {
+    description: 'Upload product images',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
   });
 };

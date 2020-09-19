@@ -126,5 +126,9 @@
   "OrderLineItem": {
     "dataSource": "mongodb",
     "public": false
+  },
+  "FileStorage": {
+    "dataSource": "storage",
+    "public": false
   }
 }

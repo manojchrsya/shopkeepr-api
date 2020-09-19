@@ -176,7 +176,10 @@ module.exports = function (ShopKeeper) {
 
   ShopKeeper.prototype.getProducts = async function (options = {}) {
     const { customerId } = options;
-    const products = await Product.find({ where: { shopKeeperId: this.id } });
+    const products = await Product.find({
+      where: { shopKeeperId: this.id },
+      include: { relation: 'images', scope: { fields: ['id', 'name', 'originalName', 'url'] } },
+    });
     if (customerId) {
       const bucket = await ShopBucket.find({ where: { customerId, shopKeeperId: this.id } });
       if (bucket.length) {

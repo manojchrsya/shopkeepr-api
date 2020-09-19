@@ -87,6 +87,7 @@
       "Product": true,
       "ShopBucket": true,
       "Order": true,
-      "OrderLineItem": true
+      "OrderLineItem": true,
+      "FileStorage": true
     }
   }
