@@ -10,5 +10,8 @@ module.exports = {
       },
     ],
   },
+  filesystem: {
+    url: process.env.ASSETS_URL,
+  },
   baseUrl: process.env.SERVER_BASE_URL,
 };

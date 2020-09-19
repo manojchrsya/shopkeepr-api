@@ -27,8 +27,6 @@ module.exports = {
         // Redis Details
         REDIS_HOST: 'localhost',
         REDIS_PORT: 6379,
-        REDIS_QUEUE_DB: 3,
-        INSTANCE_TYPE: 'cars',
       },
     },
   ],
