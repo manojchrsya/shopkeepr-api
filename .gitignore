@@ -21,6 +21,7 @@ npm-debug.log
 data
 data-init
 dist
+assets
 server/storage
 .yarn-cache.tgz
 .history

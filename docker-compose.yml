@@ -26,6 +26,7 @@ services:
       - ./:/src
       - /src/.yarn
       - /src/node_modules
+      - ./data-init/uploads:/tmp/uploads
     depends_on:
       - mongo
       - elasticsearch

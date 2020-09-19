@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "dev": "npm start",
-    "start": "DEBUG=loopback:security:* node .",
+    "start": "node .",
     "nodemon": "nodemon --legacy-watch --exec npm run dev",
     "posttest": "npm run lint && nsp check",
     "console": "node . --console"

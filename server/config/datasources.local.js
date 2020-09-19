@@ -6,7 +6,7 @@ module.exports = {
   redis: {
     host: process.env.REDIS_HOST,
   },
-  // storage: {
-  //   root: '/tmp',
-  // },
+  storage: {
+    root: '/src',
+  },
 };
