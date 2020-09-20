@@ -190,6 +190,10 @@ module.exports = (SkUser) => {
   });
 
   SkUser.login = async function (credentials = {}) {
+    // create accesstoken for customer as anonymouns user
+    if (credentials.code) {
+      return SkUser.getAnonymousToken({ code: credentials.code });
+    }
     if (!credentials.email) {
       throw new BadRequestError('email is required.');
     }
@@ -234,6 +238,45 @@ module.exports = (SkUser) => {
     };
     if (userData.shopKeeperId) {
       tokenObj.shopKeeperId = userData.shopKeeperId;
+    }
+    const token = await userData.createAccessToken(tokenObj, {});
+    userData.token = token;
+    return userData;
+  };
+
+  SkUser.remoteMethod('login', {
+    description: 'Login with registered email id and password.',
+    accepts: [
+      {
+        arg: 'credentials', type: 'object', required: true, http: { source: 'body' },
+      },
+    ],
+    returns: {
+      arg: 'status', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
+
+  SkUser.getAnonymousToken = async function (credentials = {}) {
+    if (!credentials.code) {
+      throw new BadRequestError('code is required.');
+    }
+    // get user detials
+    const userQuery = {
+      where: { name: 'Anonymous' },
+      include: [{ relation: 'roles' }],
+    };
+    const [userData, shopKeeper] = await Promise.all([
+      SkUser.findOne(userQuery),
+      ShopKeeper.findOneByCode(credentials.code),
+    ]);
+    if (!shopKeeper) throw new BadRequestError('Invalid ShopKeeper Code');
+    // creating the accesstoken for user
+    const tokenObj = {
+      ttl: SkUser.app.get('tokenTTL'),
+    };
+    if (shopKeeper.id) {
+      tokenObj.shopKeeperId = shopKeeper.id;
     }
     const token = await userData.createAccessToken(tokenObj, {});
     userData.token = token;

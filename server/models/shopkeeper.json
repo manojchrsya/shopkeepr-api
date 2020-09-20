@@ -17,7 +17,10 @@
       "generated": false
     },
     "code": {
-      "type": "string"
+      "type": "string",
+      "index": {
+        "unique": true
+      }
     },
     "displayName": {
       "type": "string",

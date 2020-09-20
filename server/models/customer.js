@@ -233,8 +233,9 @@ module.exports = function (Customer) {
     http: { verb: 'post' },
   });
 
-  Customer.findDetails = async function (options = {}) {
-    const { shopKeeperId, mobile, name } = options;
+  Customer.findDetails = async function (options = {}, ctx = {}) {
+    const { mobile, name } = options;
+    const shopKeeperId = _.get(ctx.req.accessToken, 'shopKeeperId') || options.shopKeeperId;
     // validate details
     const errors = {};
     if (!shopKeeperId) {
@@ -260,6 +261,14 @@ module.exports = function (Customer) {
     const [customer, created] = await Customer.findOrCreate({
       where: { shopKeeperId, mobile },
     }, { shopKeeperId, mobile, name });
+    // update customerId in accessToken
+    if (customer && ctx.req.accessToken) {
+      const accessToken = await SkAccessToken.findById(ctx.req.accessToken.id);
+      if (accessToken) {
+        accessToken.customerId = customer.id;
+        await accessToken.save();
+      }
+    }
     return _.pick(customer, ['id', 'name', 'mobile']);
   };
 
@@ -267,14 +276,15 @@ module.exports = function (Customer) {
     description: 'Get customer transaction details.',
     accepts: [
       { arg: 'options', type: 'object', http: { source: 'body' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
     ],
     returns: {
       arg: 'ctx', type: 'object', root: true,
     },
     http: { verb: 'post' },
   });
-  Customer.prototype.getBucket = async function (options = {}) {
-    const { shopKeeperId } = options;
+  Customer.prototype.getBucket = async function (options = {}, ctx) {
+    const shopKeeperId = _.get(ctx.req.accessToken, 'shopKeeperId') || options.shopKeeperId;
     return ShopBucket.find({ where: { customerId: this.id, shopKeeperId } });
   };
 
@@ -282,6 +292,7 @@ module.exports = function (Customer) {
     description: 'Get customer bucket details.',
     accepts: [
       { arg: 'options', type: 'object', http: { source: 'query' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
     ],
     returns: {
       arg: 'ctx', type: 'object', root: true,

@@ -74,6 +74,30 @@ module.exports = function (ShopKeeper) {
     http: { verb: 'get' },
   });
 
+  ShopKeeper.getDetails = async function (ctx) {
+    const shopKeeperId = _.get(ctx.req.accessToken, 'shopKeeperId');
+    const customerId = _.get(ctx.req.accessToken, 'customerId');
+    let customer = {};
+    if (customerId) {
+      customer = await Customer.findOneById(customerId, { fields: ['id', 'name', 'mobile'] });
+    }
+    const shopKeeper = await ShopKeeper.findOne({ where: { id: shopKeeperId } });
+    // add customer data in shopkeeper object
+    shopKeeper.customer = customer;
+    return shopKeeper;
+  };
+
+  ShopKeeper.remoteMethod('getDetails', {
+    description: 'Get Logged in ShopKeeper details.',
+    accepts: [
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'get' },
+  });
+
   ShopKeeper.getCluster = (shopKeeperId, option = {}) => {
     const { include } = option;
     const query = {
@@ -174,8 +198,8 @@ module.exports = function (ShopKeeper) {
     http: { verb: 'get' },
   });
 
-  ShopKeeper.prototype.getProducts = async function (options = {}) {
-    const { customerId } = options;
+  ShopKeeper.prototype.getProducts = async function (options = {}, ctx) {
+    const customerId = _.get(ctx.req.accessToken, 'customerId') || options.customerId;
     const products = await Product.find({
       where: { shopKeeperId: this.id },
       include: { relation: 'images', scope: { fields: ['id', 'name', 'originalName', 'url'] } },
@@ -201,6 +225,7 @@ module.exports = function (ShopKeeper) {
     description: 'Get shopkeeper products list.',
     accepts: [
       { arg: 'options', type: 'object', http: { source: 'query' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
     ],
     returns: {
       arg: 'ctx', type: 'object', root: true,
@@ -248,11 +273,12 @@ module.exports = function (ShopKeeper) {
   });
 
   ShopKeeper.getOrders = async function (options = {}, ctx) {
-    const { customerId, orderType } = options;
+    const { orderType } = options;
+    const customerId = _.get(ctx.req.accessToken, 'customerId') || options.customerId;
+    const shopKeeperId = _.get(ctx.req.accessToken, 'shopKeeperId') || options.shopKeeperId;
     const query = { where: {} };
-    if (ctx && ctx.req && ctx.req.accessToken && ctx.req.accessToken.shopKeeperId) {
-      query.where.shopKeeperId = ctx.req.accessToken.shopKeeperId;
-    } else if (customerId) {
+    query.where.shopKeeperId = shopKeeperId;
+    if (customerId) {
       query.where.customerId = customerId;
     }
     if (orderType === 'open') {

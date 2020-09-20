@@ -96,5 +96,29 @@ SkACL.create({ model: 'ShopKeeper',property: 'getOrders', accessType: 'READ', pe
 SkACL.create({ model: 'ShopKeeper',property: 'getOrderDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
 SkACL.create({ model: 'ShopKeeper',property: 'updateOrderStatus', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 
-SkACL.create({ model: 'ShopKeeper',property: 'uploadProductImage', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Product',property: 'uploadProductImage', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 
+---------------
+SkRole.create({ name: '$sk-customer', description: 'shop customer',defaultRoute: '/products', routes: ['/products', '/bucket', '/orders/list', '/orders/detail']})
+getUniqId()
+db.SkUser.insert({_id: '1600584689419392', name: 'Anonymous', status: 'ACTIVE'})
+SkRoleMapping.create({principalType: 'USER', principalId: '1600584689419392', roleId: '5f66f97ba4430b073ba38d80'})
+
+SkACL.create({ model: 'SkUser',property: 'findOne', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'ShopKeeper',property: 'getShopConfig', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'ShopKeeper',property: 'find', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'ShopKeeper',property: 'getProducts', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'Customer',property: 'findDetails', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'Customer',property: 'findDetails', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Customer',property: 'getBucket', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'Customer',property: 'getBucket', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Customer',property: 'updateBucket', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+
+SkACL.create({ model: 'ShopKeeper',property: 'placeOrder', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'ShopKeeper',property: 'placeOrder', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'ShopKeeper',property: 'getOrders', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'ShopKeeper',property: 'getOrders', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'ShopKeeper',property: 'getOrderDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'ShopKeeper',property: 'getOrderDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'ShopKeeper',property: 'getDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
+SkACL.create({ model: 'ShopKeeper',property: 'getDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
