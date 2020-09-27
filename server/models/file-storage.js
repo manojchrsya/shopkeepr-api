@@ -57,5 +57,19 @@ module.exports = function (FileStorage) {
       });
     });
   };
+
+  FileStorage.deleteFile = async function (options) {
+    const { fileId } = options;
+    const container = _.join([FileStorage.getFileBucket()], '/');
+    const fileResource = await FileResource.findById(fileId);
+    if (!fileResource) throw new BadRequestError('Invalid File Id.');
+    // remove uploaded file
+    return new Promise((done) => {
+      FileStorage.removeFile(container, fileResource.name, async () => {
+        await fileResource.delete();
+        done(fileResource);
+      });
+    });
+  };
 };
 

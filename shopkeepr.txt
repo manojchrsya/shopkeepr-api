@@ -86,6 +86,8 @@ SkACL.create({ model: 'Product', property: '*', accessType: '*', permission: 'DE
 SkACL.create({ model: 'Product',property: 'find', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'Product',property: 'create', accessType: 'WRITE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 
+
+
 SkACL.create({ model: 'Customer',property: 'updateBucket', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'ShopKeeper',property: 'getProducts', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'Customer',property: 'findDetails', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
@@ -101,8 +103,8 @@ SkACL.create({ model: 'Product',property: 'uploadProductImage', accessType: 'EXE
 ---------------
 SkRole.create({ name: '$sk-customer', description: 'shop customer',defaultRoute: '/products', routes: ['/products', '/bucket', '/orders/list', '/orders/detail']})
 getUniqId()
-db.SkUser.insert({_id: '1600584689419392', name: 'Anonymous', status: 'ACTIVE'})
-SkRoleMapping.create({principalType: 'USER', principalId: '1600584689419392', roleId: '5f66f97ba4430b073ba38d80'})
+db.SkUser.insert({_id: '1600605230215215', name: 'Anonymous', status: 'ACTIVE'})
+SkRoleMapping.create({principalType: 'USER', principalId: '1600605230215215', roleId: '5f674c148a6df20887b89c0d'})
 
 SkACL.create({ model: 'SkUser',property: 'findOne', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
 SkACL.create({ model: 'ShopKeeper',property: 'getShopConfig', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
@@ -122,3 +124,11 @@ SkACL.create({ model: 'ShopKeeper',property: 'getOrderDetails', accessType: 'REA
 SkACL.create({ model: 'ShopKeeper',property: 'getOrderDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
 SkACL.create({ model: 'ShopKeeper',property: 'getDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
 SkACL.create({ model: 'ShopKeeper',property: 'getDetails', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+
+
+-----------------------
+
+SkRole.findOneById('5df601d32f557201e6bd913c').then(data => { data.routes = Array.from(new Set([...data.routes, '/products/edit'])); return data.save(); })
+SkACL.create({ model: 'Product',property: 'findById', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Product',property: 'patchAttributes', accessType: 'WRITE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+SkACL.create({ model: 'Product',property: 'deleteProductImage', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})

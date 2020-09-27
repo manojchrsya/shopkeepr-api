@@ -200,8 +200,13 @@ module.exports = function (ShopKeeper) {
 
   ShopKeeper.prototype.getProducts = async function (options = {}, ctx) {
     const customerId = _.get(ctx.req.accessToken, 'customerId') || options.customerId;
+    const query = {
+      shopKeeperId: this.id,
+    };
+    // filter active products for customer
+    if (customerId) query.status = Product.STATUS_ACTIVE;
     const products = await Product.find({
-      where: { shopKeeperId: this.id },
+      where: { ...query },
       include: { relation: 'images', scope: { fields: ['id', 'name', 'originalName', 'url'] } },
     });
     if (customerId) {

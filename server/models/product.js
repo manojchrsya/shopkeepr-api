@@ -3,7 +3,7 @@ const _ = require('lodash');
 module.exports = function (Product) {
   Product.STATUS_ACTIVE = 'ACTIVE';
   Product.STATUS_INACTIVE = 'INACTIVE';
-  Product.VALID_UNITS = ['LTR', 'PCS', 'PKT', 'UNT', 'KG', 'GRAM'];
+  Product.VALID_UNITS = ['LTR', 'PCS', 'PKT', 'UNT', 'KG', '500 G', '250 G', '50 G'];
 
   Product.setup = function () {
     const ProductModel = this;
@@ -43,6 +43,28 @@ module.exports = function (Product) {
   };
 
   Product.remoteMethod('prototype.uploadProductImage', {
+    description: 'Upload product images',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
+
+  Product.prototype.deleteProductImage = async function (options = {}) {
+    const { imageId } = options;
+    if (!imageId) throw new BadRequestError('ImageId is required.');
+    return FileStorage.deleteFile({
+      productId: this.id,
+      modelName: Product.modelName,
+      fileId: imageId,
+    });
+  };
+
+  Product.remoteMethod('prototype.deleteProductImage', {
     description: 'Upload product images',
     accepts: [
       { arg: 'options', type: 'object', http: { source: 'body' } },
