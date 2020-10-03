@@ -81,9 +81,13 @@ module.exports = function (ShopKeeper) {
     if (customerId) {
       customer = await Customer.findOneById(customerId, { fields: ['id', 'name', 'mobile'] });
     }
-    const shopKeeper = await ShopKeeper.findOne({ where: { id: shopKeeperId } });
+    const [shopKeeper, categories] = await Promise.all([
+      ShopKeeper.findOne({ where: { id: shopKeeperId } }),
+      Product.getCategories({ shopKeeperId }),
+    ]);
     // add customer data in shopkeeper object
     shopKeeper.customer = customer;
+    shopKeeper.categories = categories;
     return shopKeeper;
   };
 
@@ -203,10 +207,21 @@ module.exports = function (ShopKeeper) {
     const query = {
       shopKeeperId: this.id,
     };
+    const {
+      skip = 0, limit = 10, categories = [], q = '',
+    } = options;
+    if (categories.length > 0) {
+      query.categories = { inq: categories };
+    }
+    if (q.length > 0) {
+      query.title = { regexp: `/${escapeRegExp(q)}/i` };
+    }
     // filter active products for customer
     if (customerId) query.status = Product.STATUS_ACTIVE;
     const products = await Product.find({
       where: { ...query },
+      skip,
+      limit,
       include: { relation: 'images', scope: { fields: ['id', 'name', 'originalName', 'url'] } },
     });
     if (customerId) {

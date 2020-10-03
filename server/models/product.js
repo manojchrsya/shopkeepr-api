@@ -54,6 +54,12 @@ module.exports = function (Product) {
     http: { verb: 'post' },
   });
 
+  Product.getCategories = async function (options) {
+    const { shopKeeperId } = options;
+    const productColl = await Product.getDBConnection();
+    return productColl.distinct('categories', { shopKeeperId });
+  };
+
   Product.prototype.deleteProductImage = async function (options = {}) {
     const { imageId } = options;
     if (!imageId) throw new BadRequestError('ImageId is required.');

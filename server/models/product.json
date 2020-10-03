@@ -25,6 +25,11 @@
     "description": {
       "type": "string"
     },
+    "categories": {
+      "type": [
+        "string"
+      ]
+    },
     "status": {
       "type": "string"
     },
