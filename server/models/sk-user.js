@@ -295,4 +295,32 @@ module.exports = (SkUser) => {
     },
     http: { verb: 'post' },
   });
+
+  SkUser.updateAnonymousToken = async function (options = {}, ctx = {}) {
+    if (!options.code) {
+      throw new BadRequestError('code is required.');
+    }
+    const shopKeeper = await ShopKeeper.findOneByCode(options.code);
+    if (!shopKeeper) throw new BadRequestError('Invalid ShopKeeper Code');
+    // get token detials
+    const { accessToken } = ctx.req;
+    if (accessToken && shopKeeper) {
+      accessToken.shopKeeperId = shopKeeper.id;
+    }
+    return accessToken.save();
+  };
+
+  SkUser.remoteMethod('updateAnonymousToken', {
+    description: 'Update shopkeeper id in anonymous accesstoken.',
+    accepts: [
+      {
+        arg: 'options', type: 'object', required: true, http: { source: 'body' },
+      },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
 };

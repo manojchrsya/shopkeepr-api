@@ -132,3 +132,5 @@ SkRole.findOneById('5df601d32f557201e6bd913c').then(data => { data.routes = Arra
 SkACL.create({ model: 'Product',property: 'findById', accessType: 'READ', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'Product',property: 'patchAttributes', accessType: 'WRITE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
 SkACL.create({ model: 'Product',property: 'deleteProductImage', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-admin'})
+
+SkACL.create({ model: 'SkUser',property: 'updateAnonymousToken', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
