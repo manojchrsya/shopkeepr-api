@@ -375,4 +375,25 @@ module.exports = function (ShopKeeper) {
     },
     http: { verb: 'post' },
   });
+
+  ShopKeeper.saveFcmToken = async function (options = {}, ctx = {}) {
+    const { shopKeeperId, userId } = ctx.req && ctx.req.accessToken;
+    const data = _.pick(options, ['deviceId', 'deviceName', 'fcmAccessToken']);
+    if (!data.deviceId) throw new BadRequestError('deviceId field is required.');
+    data.shopKeeperId = shopKeeperId;
+    data.userId = userId;
+    return FcmToken.upsertWithWhere({ deviceId: data.deviceId }, data);
+  };
+
+  ShopKeeper.remoteMethod('saveFcmToken', {
+    description: 'Update order status.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
 };

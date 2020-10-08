@@ -21,23 +21,11 @@
       "type": "string",
       "required": true
     },
-    "userAccessToken": {
-      "type": "string",
-      "required": true
-    },
     "deviceId": {
       "type": "string",
       "required": true
     },
     "deviceName": {
-      "type": "string",
-      "required": true
-    },
-    "platform": {
-      "type": "string",
-      "required": true
-    },
-    "version": {
       "type": "string",
       "required": true
     },
