@@ -130,5 +130,9 @@
   "FileStorage": {
     "dataSource": "storage",
     "public": false
+  },
+  "FcmToken": {
+    "dataSource": "storage",
+    "public": false
   }
 }
