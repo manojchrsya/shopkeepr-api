@@ -3,7 +3,7 @@ const _ = require('lodash');
 module.exports = function (Product) {
   Product.STATUS_ACTIVE = 'ACTIVE';
   Product.STATUS_INACTIVE = 'INACTIVE';
-  Product.VALID_UNITS = ['LTR', 'PCS', 'PKT', 'UNT', 'KG', '500 G', '250 G', '50 G'];
+  Product.VALID_UNITS = ['LTR', 'PCS', 'PKT', 'UNT', 'KG', 'DZN', '500 G', '250 G', '50 G'];
 
   Product.setup = function () {
     const ProductModel = this;
