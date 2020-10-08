@@ -132,7 +132,7 @@
     "public": false
   },
   "FcmToken": {
-    "dataSource": "storage",
+    "dataSource": "mongodb",
     "public": false
   }
 }
