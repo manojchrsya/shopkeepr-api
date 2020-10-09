@@ -278,6 +278,8 @@ module.exports = function (ShopKeeper) {
       OrderLineItem.create(data),
       ShopBucket.destroyAll({ shopKeeperId: this.id, customerId }),
     ]);
+    // execute in backgroud do not wait for response
+    order.notifyShopKeeper({ shopKeeperId: this.id, customerId });
     return order;
   };
 
@@ -386,7 +388,7 @@ module.exports = function (ShopKeeper) {
   };
 
   ShopKeeper.remoteMethod('saveFcmToken', {
-    description: 'Update order status.',
+    description: 'Save Fcm access token.',
     accepts: [
       { arg: 'options', type: 'object', http: { source: 'body' } },
       { arg: 'ctx', type: 'object', http: { source: 'context' } },
@@ -395,5 +397,22 @@ module.exports = function (ShopKeeper) {
       arg: 'ctx', type: 'object', root: true,
     },
     http: { verb: 'post' },
+  });
+
+  ShopKeeper.removeFcmToken = async function (deviceId) {
+    return FcmToken.destroyAll({ deviceId });
+  };
+
+  ShopKeeper.remoteMethod('removeFcmToken', {
+    description: 'Delete fcm access token from deviceId',
+    accepts: [
+      {
+        arg: 'deviceId', required: true, type: 'string', http: { source: 'path' },
+      },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { path: '/removeFcmToken/:deviceId', verb: 'delete' },
   });
 };

@@ -134,5 +134,9 @@
   "FcmToken": {
     "dataSource": "mongodb",
     "public": false
+  },
+  "Notification": {
+    "dataSource": "mongodb",
+    "public": false
   }
 }

@@ -136,4 +136,5 @@ SkACL.create({ model: 'Product',property: 'deleteProductImage', accessType: 'EXE
 SkACL.create({ model: 'SkUser',property: 'updateAnonymousToken', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$sk-customer'})
 
 SkACL.create({ model: 'ShopKeeper',property: 'saveFcmToken', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$authenticated'})
+SkACL.create({ model: 'ShopKeeper',property: 'removeFcmToken', accessType: 'EXECUTE', permission: 'ALLOW', principalType: 'ROLE', principalId: '$everyone'})
 
