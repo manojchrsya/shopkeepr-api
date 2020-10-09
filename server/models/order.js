@@ -1,3 +1,4 @@
+const _ = require('lodash');
 
 module.exports = function (Order) {
   Order.STATUS_RECEIVED = 'RECEIVED';
@@ -63,5 +64,26 @@ module.exports = function (Order) {
       value: 0,
     });
     return counter.updateAttributes({ value: counter.value + 1 });
+  };
+
+  Order.prototype.notifyShopKeeper = async function (options) {
+    const { shopKeeperId, customerId } = options;
+    const shopUsers = await SkUser.findByShopKeeperId(shopKeeperId, { fields: ['id'] });
+    if (shopUsers.length === 0) return [];
+
+    const [fcmTokens, customer] = await Promise.all([
+      FcmToken.find({ where: { userId: { inq: _.map(shopUsers, 'id') } }, fields: ['id', 'fcmAccessToken'] }),
+      Customer.findById(customerId, { fields: ['id', 'name'] }),
+    ]);
+    const params = {
+      title: this.orderNumber,
+      body: `Congrats!! got new order from ${_.startCase(_.toLower(customer.name))}`,
+    };
+    return Notification.send({
+      shopKeeperId,
+      customerId,
+      tokens: _.map(fcmTokens, 'fcmAccessToken'),
+      params,
+    });
   };
 };

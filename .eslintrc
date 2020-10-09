@@ -89,6 +89,7 @@
       "Order": true,
       "OrderLineItem": true,
       "FileStorage": true,
-      "FcmToken": true
+      "FcmToken": true,
+      "Notification": true
     }
   }
