@@ -1,0 +1,51 @@
+{
+  "name": "Notification",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "shopKeeperId": {
+      "type": "string"
+    },
+    "customerId": {
+      "type": "string"
+    },
+    "params": {
+      "type": "object",
+      "required": true
+    },
+    "tokens": {
+      "type": ["string"],
+      "required": true
+    },
+    "sent": {
+      "type": "boolean",
+      "default": false
+    },
+    "sentOn": {
+      "type": "date"
+    },
+    "responseRaw": {
+      "type": "object"
+    },
+    "response": {
+      "type": "object"
+    },
+    "error": {
+      "type": "boolean",
+      "default": false
+    },
+    "errorOn": {
+      "type": "date"
+    },
+    "errorDetails": {
+      "type": "object"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

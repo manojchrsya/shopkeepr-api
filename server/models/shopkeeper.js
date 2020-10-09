@@ -278,6 +278,8 @@ module.exports = function (ShopKeeper) {
       OrderLineItem.create(data),
       ShopBucket.destroyAll({ shopKeeperId: this.id, customerId }),
     ]);
+    // execute in backgroud do not wait for response
+    order.notifyShopKeeper({ shopKeeperId: this.id, customerId });
     return order;
   };
 
@@ -374,5 +376,43 @@ module.exports = function (ShopKeeper) {
       arg: 'ctx', type: 'object', root: true,
     },
     http: { verb: 'post' },
+  });
+
+  ShopKeeper.saveFcmToken = async function (options = {}, ctx = {}) {
+    const { shopKeeperId, userId } = ctx.req && ctx.req.accessToken;
+    const data = _.pick(options, ['deviceId', 'deviceName', 'fcmAccessToken']);
+    if (!data.deviceId) throw new BadRequestError('deviceId field is required.');
+    data.shopKeeperId = shopKeeperId;
+    data.userId = userId;
+    return FcmToken.upsertWithWhere({ deviceId: data.deviceId }, data);
+  };
+
+  ShopKeeper.remoteMethod('saveFcmToken', {
+    description: 'Save Fcm access token.',
+    accepts: [
+      { arg: 'options', type: 'object', http: { source: 'body' } },
+      { arg: 'ctx', type: 'object', http: { source: 'context' } },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { verb: 'post' },
+  });
+
+  ShopKeeper.removeFcmToken = async function (deviceId) {
+    return FcmToken.destroyAll({ deviceId });
+  };
+
+  ShopKeeper.remoteMethod('removeFcmToken', {
+    description: 'Delete fcm access token from deviceId',
+    accepts: [
+      {
+        arg: 'deviceId', required: true, type: 'string', http: { source: 'path' },
+      },
+    ],
+    returns: {
+      arg: 'ctx', type: 'object', root: true,
+    },
+    http: { path: '/removeFcmToken/:deviceId', verb: 'delete' },
   });
 };

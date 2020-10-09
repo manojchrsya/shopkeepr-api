@@ -130,5 +130,13 @@
   "FileStorage": {
     "dataSource": "storage",
     "public": false
+  },
+  "FcmToken": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "Notification": {
+    "dataSource": "mongodb",
+    "public": false
   }
 }

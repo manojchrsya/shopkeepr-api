@@ -88,6 +88,8 @@
       "ShopBucket": true,
       "Order": true,
       "OrderLineItem": true,
-      "FileStorage": true
+      "FileStorage": true,
+      "FcmToken": true,
+      "Notification": true
     }
   }
