@@ -29,3 +29,4 @@ server/storage
 
 .env
 ecosystem.config.js
+fcm.config.json
