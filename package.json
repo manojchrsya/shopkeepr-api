@@ -52,7 +52,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.18.1",
-    "nodemailer": "2.5.0",
+    "nodemailer": "6.4.16",
     "number-formatter": "^1.2.0",
     "quickthumb": "0.0.12",
     "request-promise": "^4.2.1",
