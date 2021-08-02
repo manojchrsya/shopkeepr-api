@@ -39,7 +39,7 @@
     "isemail": "^3.0.0",
     "json2csv": "^3.11.5",
     "kue": "^0.11.6",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "loopback": "^3.17.1",
     "loopback-boot": "^2.6.5",
     "loopback-component-explorer": "^4.0.0",
