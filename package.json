@@ -51,7 +51,7 @@
     "loopback-datasource-juggler": "^3.15.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
-    "moment": "^2.18.1",
+    "moment": "^2.29.4",
     "nodemailer": "2.5.0",
     "number-formatter": "^1.2.0",
     "quickthumb": "0.0.12",
